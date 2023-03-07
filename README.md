@@ -1,13 +1,10 @@
-# ChatGPT Web
+# ChatGPT Web [在线演示](https://simplegpt.io)
 
 <div style="font-size: 1.5rem;">
   <a href="./README.md">中文</a> |
   <a href="./README.en.md">English</a>
 </div>
 </br>
-
-> Disclaimer: This project is only released on GitHub, under the MIT License, free and for open-source learning
-purposes. There will be no account selling, paid services, discussion groups, or forums. Beware of fraud.
 
 ![cover3](./docs/c3.png)
 ![cover](./docs/c1.png)
