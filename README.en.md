@@ -134,7 +134,7 @@ pnpm dev
 2. Copy the built `dist` folder to `/docker-compose/nginx` and rename it to `html`:
 
 	```shell
-	cp dist/ docker-compose/nginx/ -r
+	cp dist/ docker-compose/nginx/html -r
 	```
 
 3. Edit the `/docker-compose/nginx/nginx.conf` file and replace the server_name with **your server IP**.
