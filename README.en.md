@@ -12,19 +12,19 @@
 
 - [ChatGPT Web](#chatgpt-web)
 	- [Introduction](#Introduction)
-	- [Fast Deployment](#Fast Deployment)
-	- [Development Environment Setup](#Development Environment Setup)
+	- [Fast Deployment](#Fast-Deployment)
+	- [Development Environment Setup](#Development-Environment-Setup)
 		- [Node](#Node)
 		- [PNPM](#PNPM)
 		- [Python](#Python)
-	- [Starting the Project in Development Environment](#Starting the Project in Development Environment)
+	- [Starting the Project in Development Environment](#Startingthe-Project-in-Development-Environment)
 		- [Backend](#Backend)
 		- [Frontend](#Frontend)
-	- [Building Docker Containers](#Building Docker Containers)
-		- [Frontend Build](#Frontend Build)
-		- [Backend Build](#Backend Build)
-	- [Starting with Docker Compose](#Starting with Docker Compose)
-		- [Starting with DockerHub](#Starting with DockerHub)
+	- [Building Docker Containers](#Building-Docker-Containers)
+		- [Frontend Build](#Frontend-Build)
+		- [Backend Build](#Backend-Build)
+	- [Starting with Docker Compose](#Starting-with-Docker-Compose)
+		- [Starting with DockerHub](#Starting-with-DockerHub)
 		- [FAQ](#FAQ)
 		- [Build](#Build)
 		- [Support](#Support)
@@ -61,12 +61,12 @@ Other updates:
 3. Improved the mobile experience.
 4. The backend has been rewritten in Python (because I can't use Node.js).
 
-## Fast Deployment
+## Fast-Deployment
 
 If you don't need to develop, and just want to deploy and use, you can skip
 to [Starting with DockerHub](#Starting with DockerHub)
 
-## Development Environment Setup
+## Development-Environment-Setup
 
 ### Node
 
@@ -117,9 +117,9 @@ pnpm bootstrap
 pnpm dev
 ```
 
-## Building Docker Containers
+## Building-Docker-Containers
 
-### Frontend Build (Requires Node, Docker, and Docker Compose)
+### Frontend-Build
 
 1. Run the following command at the root of the project:
 
@@ -143,7 +143,7 @@ pnpm dev
 	```
 
 
-### Backend Build
+### Backend-Build
 
 1. Enter the `/service` directory and run the following command
 
@@ -151,7 +151,7 @@ pnpm dev
 	docker build -t chatgpt-web-backend .
 	```
 
-### Starting with Docker Compose
+### Starting-with-Docker-Compose
 
 - Go to the folder `/docker-compose` and modify the `docker-compose.yml` file
 
@@ -193,7 +193,7 @@ pnpm dev
 	docker-compose up -d
 	```
 
-## Starting with DockerHub
+## Starting-with-DockerHub
 
 - If you don't want to package the image yourself, you can directly use the image I have already packaged.
 

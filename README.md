@@ -23,7 +23,7 @@
 	- [打包为docker容器](#打包为docker容器)
 		- [前端打包](#前端资源打包(需要安装node和docker、docker-compose))
 		- [后端打包](#后端服务打包)
-	- [使用Docker compose启动](#使用Docker compose启动)
+	- [使用DockerCompose启动](#使用DockerCompose启动)
 	- [常见问题](#常见问题)
 	- [参与贡献](#参与贡献)
 	- [赞助原作者](#赞助)
@@ -142,7 +142,7 @@ pnpm dev
 	 docker build -t chatgpt-web-backend .
 	 ```
 
-### 使用Docker compose启动
+### 使用DockerCompose启动
 
 - 进入文件夹 `/docker-compose` 修改 `docker-compose.yml` 文件
 
