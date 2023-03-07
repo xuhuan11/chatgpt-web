@@ -128,7 +128,7 @@ pnpm dev
 	 ```
 2. 将打包好的文件夹`dist`文件夹复制到`/docker-compose/nginx`目录下，并改名为`html`
 	```shell
-	cp dist/ docker-compose/nginx/ -r
+	cp dist/ docker-compose/nginx/html -r
 	```
 
 3. 修改`/docker-compose/nginx/nginx.conf`文件，填写你的服务器IP
