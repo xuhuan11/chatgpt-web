@@ -2,8 +2,9 @@ version: '3'
 
 services:
   app:
-    image: wenjing95/chatgpt-web-backend:latest
-    # image: chatgpt-web-backend:latest
+    # 根据自己的系统选择x86_64还是aarch64
+    image: wenjing95/chatgpt-web-backend:x86_64
+    # image: wenjing95/chatgpt-web-backend:aarch64
     ports:
       - 3002:3002
     environment:
@@ -18,8 +19,9 @@ services:
       PORT: 3002
   nginx:
     build: nginx
-    image: wenjing95/chatgpt-web-frontend:latest
-    # image: chatgpt-web-frontend:latest
+    # 根据自己的系统选择x86_64还是aarch64
+    image: wenjing95/chatgpt-web-frontend:x86_64
+    # image: wenjing95/chatgpt-web-frontend:aarch64
     ports:
       - '80:80'
     expose:
