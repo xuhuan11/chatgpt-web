@@ -4,16 +4,19 @@ const LOCAL_NAME = 'appSetting'
 
 export type Theme = 'light' | 'dark' | 'auto'
 
-export type Language = 'zh-CN' | 'en-US'
+export type Language = 'zh-CN' | 'en-US' | 'ja-JP'
+
+export type focusTextarea = true
 
 export interface AppState {
   siderCollapsed: boolean
   theme: Theme
   language: Language
+  focusTextarea: focusTextarea
 }
 
 export function defaultSetting(): AppState {
-  return { siderCollapsed: false, theme: 'light', language: 'zh-CN' }
+  return { siderCollapsed: false, theme: 'dark', language: 'zh-CN', focusTextarea: true }
 }
 
 export function getLocalSetting(): AppState {

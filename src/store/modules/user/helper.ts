@@ -6,6 +6,8 @@ export interface UserInfo {
   avatar: string
   name: string
   description: string
+  chatgpt_top_p: number
+  chatgpt_memory: number
 }
 
 export interface UserState {
@@ -15,9 +17,12 @@ export interface UserState {
 export function defaultSetting(): UserState {
   return {
     userInfo: {
-      avatar: 'https://raw.githubusercontent.com/Chanzhaoyu/chatgpt-web/main/src/assets/avatar.jpg',
-      name: 'ChenZhaoYu',
-      description: 'Star on <a href="https://github.com/Chanzhaoyu/chatgpt-bot" class="text-blue-500" target="_blank" >Github</a>',
+      avatar: 'https://api.multiavatar.com/0.8481955987976837.svg',
+      name: 'ChatGPT Web',
+
+      description: '',
+      chatgpt_top_p: 100,
+      chatgpt_memory: 50,
     },
   }
 }

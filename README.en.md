@@ -6,307 +6,283 @@
 </div>
 </br>
 
-> Disclaimer: This project is only released on GitHub, under the MIT License, free and for open-source learning purposes. There will be no account selling, paid services, discussion groups, or forums. Beware of fraud.
+> Disclaimer: This project is only released on GitHub, under the MIT License, free and for open-source learning
+purposes. There will be no account selling, paid services, discussion groups, or forums. Beware of fraud.
 
+![cover3](./docs/c3.png)
 ![cover](./docs/c1.png)
 ![cover2](./docs/c2.png)
 
 - [ChatGPT Web](#chatgpt-web)
-	- [Introduction](#introduction)
-	- [Roadmap](#roadmap)
-	- [Prerequisites](#prerequisites)
-		- [Node](#node)
-		- [PNPM](#pnpm)
-		- [Fill in the Keys](#fill-in-the-keys)
-	- [Install Dependencies](#install-dependencies)
-		- [Backend](#backend)
-		- [Frontend](#frontend)
-	- [Run in Test Environment](#run-in-test-environment)
-		- [Backend Service](#backend-service)
-		- [Frontend Webpage](#frontend-webpage)
-	- [Packaging](#packaging)
-		- [Using Docker](#using-docker)
-			- [Docker Parameter Example](#docker-parameter-example)
-			- [Docker Build \& Run](#docker-build--run)
-			- [Docker Compose](#docker-compose)
-		- [Deployment with Railway](#deployment-with-railway)
-			- [Railway Environment Variables](#railway-environment-variables)
-		- [Manual packaging](#manual-packaging)
-			- [Backend service](#backend-service-1)
-			- [Frontend webpage](#frontend-webpage-1)
-	- [Frequently Asked Questions](#frequently-asked-questions)
-	- [Contributing](#contributing)
-	- [Sponsorship](#sponsorship)
-	- [License](#license)
+	- [Introduction](#Introduction)
+	- [One-click Deployment](#One-click Deployment)
+	- [Development Environment Setup](#Development Environment Setup)
+		- [Node](#Node)
+		- [PNPM](#PNPM)
+		- [Python](#Python)
+	- [Starting the Project in Development Environment](#Starting the Project in Development Environment)
+		- [Backend](#Backend)
+		- [Frontend](#Frontend)
+	- [Building Docker Containers](#Building Docker Containers)
+		- [Frontend Build](#Frontend Build)
+		- [Backend Build](#Backend Build)
+	- [Starting with Docker Compose](#Starting with Docker Compose)
+		- [Starting with DockerHub](#Starting with DockerHub)
+		- [FAQ](#FAQ)
+		- [Build](#Build)
+		- [Support](#Support)
+		- [License](#license)
 
 ## Introduction
 
-Supports dual models, provides two unofficial `ChatGPT API` methods:
+The `ChatGPT Web` page can be deployed on your own server, forked and modified
+from [Chanzhaoyu/chatgpt-web](https://github.com/Chanzhaoyu/chatgpt-web/)，It uses the official OpenAI API to connect to
+the `gpt-3.5-turbo` model to achieve a conversation effect similar to `ChatGPT Plus`.
 
-| Method                                        | Free?  | Reliability | Quality |
-| --------------------------------------------- | ------ | ----------- | ------- |
-| `ChatGPTAPI(gpt-3.5-turbo-0301)`                           | No     | Reliable    | Relatively clumsy |
-| `ChatGPTUnofficialProxyAPI(Web accessToken)` | Yes    | Relatively unreliable | Smart |
+Compared to the paid version `ChatGPT Plus` provided by OpenAI, `ChatGPT Web` has the following advantages:
 
-Comparison:
-1. `ChatGPTAPI` uses `gpt-3.5-turbo-0301` to simulate `ChatGPT` through the official `OpenAI` completion `API` (the most reliable method, but it is not free and does not use models specifically tuned for chat).
-2. `ChatGPTUnofficialProxyAPI` accesses `ChatGPT`'s backend `API` via an unofficial proxy server to bypass `Cloudflare` (uses the real `ChatGPT`, is very lightweight, but depends on third-party servers and has rate limits).
+1. **Can help you save money**. You can experience almost the same conversation service as `ChatGPT Plus` for about 10% of the cost.
+	 For daily learning and work use, you don't need to spend $20 per month to purchase the Plus service. The usage cost
+	 of `ChatGPT Web` page to connect to the API by yourself is about 1/10 of `ChatGPT Plus`.
+2. **Easy to share**. You can share your own `ChatGPT Web` site with family and friends, and they no longer need to go
+	 through the tedious process of "solving network problems"-"logging in"-"entering passwords"-"selecting captchas" to
+	 easily enjoy the productivity improvement brought by `ChatGPT Plus`.
 
-[Details](https://github.com/Chanzhaoyu/chatgpt-web/issues/138)
+Compared to the [original version of Chanzhaoyu](https://github.com/Chanzhaoyu/chatgpt-web/), the differences are:
 
-Switching Methods:
-1. Go to the `service/.env` file.
-2. For `OpenAI API Key`, fill in the `OPENAI_API_KEY` field [(Get apiKey)](https://platform.openai.com/overview).
-3. For `Web API`, fill in the `OPENAI_ACCESS_TOKEN` field [(Get accessToken)](https://chat.openai.com/api/auth/session).
-4. When both are present, `OpenAI API Key` takes precedence.
+1. Can recognize voice messages: achieved by integrating the `whisper-1` API.
+2. Can fine-tune parameters: by adjusting settings, you can save token consumption and improve the accuracy of ChatGpt's
+	 responses.
+3. ChatGpt now remembers more context: chat records are persistently stored on the server.
+4. Removed `ChatGPTUnofficialProxyAPI` and reverse proxy functionality: to ensure stability, we encourage the use of
+	 ChatGpt through forward proxies and the official API.
 
-Reverse Proxy:
+Other updates:
 
-Available when using `ChatGPTUnofficialProxyAPI`.[Details](https://github.com/transitive-bullshit/chatgpt-api#reverse-proxy)
+1. Random avatar generation is now available.
+2. Added a Japanese interface.
+3. Improved the mobile experience.
+4. The backend has been rewritten in Python (because I can't use Node.js).
 
-```shell
-# service/.env
-API_REVERSE_PROXY=
-```
+## One-click Deployment
 
-Environment Variables:
+If you don't need to develop, and just want to deploy and use, you can skip
+to [Starting with DockerHub](#Starting with DockerHub)
 
-For all parameter variables, check [here](#docker-parameter-example) or see:
-
-```
-/service/.env
-```
-
-## Roadmap
-[✓] Dual models
-
-[✓] Multiple session storage and context logic
-
-[✓] Formatting and beautifying code-like message types
-
-[✓] Multilingual interface
-
-[✓] Interface themes
-
-[✗] More...
-
-## Prerequisites
+## Development Environment Setup
 
 ### Node
 
-`node` requires version `^16 || ^18` (`node >= 14` requires installation of [fetch polyfill](https://github.com/developit/unfetch#usage-as-a-polyfill)), and multiple local `node` versions can be managed using [nvm](https://github.com/nvm-sh/nvm).
+`node` version `^16 || ^18` is required (`node >= 14` needs to
+install [fetch polyfill](https://github.com/developit/unfetch#usage-as-a-polyfill)），You can manage multiple `node`
+versions on your local machine using [nvm](https://github.com/nvm-sh/nvm)
 
 ```shell
 node -v
 ```
 
 ### PNPM
-If you have not installed `pnpm` before:
+
+If you don't have `pnpm`
+
 ```shell
 npm install pnpm -g
 ```
 
-### Fill in the Keys
+### Python
 
-Get `Openai Api Key` or `accessToken` and fill in the local environment variables [jump](#introduction)
+The `python` version needs to be `3.10` or higher. go to the `/service` folder and run the following command:
 
-```
-# service/.env file
-
-# OpenAI API Key - https://platform.openai.com/overview
-OPENAI_API_KEY=
-
-# change this to an `accessToken` extracted from the ChatGPT site's `https://chat.openai.com/api/auth/session` response
-OPENAI_ACCESS_TOKEN=
+```shell
+pip install --no-cache-dir -r requirements.txt
 ```
 
-## Install Dependencies
-
-> To make it easier for `backend developers` to understand, we did not use the front-end `workspace` mode, but stored it in different folders. If you only need to do secondary development of the front-end page, delete the `service` folder.
+## Starting the Project in Development Environment
 
 ### Backend
 
-Enter the `/service` folder and run the following command
+Only `OPENAI_API_KEY` must required, you need to register an account on [OpenAI](https://platform.openai.com/) and
+obtain your API key [here](https://platform.openai.com/account/api-keys)
 
 ```shell
-pnpm install
+# You can run the following command in the /service directory:
+python main.py --openai_api_key="$OPENAI_API_KEY" --api_model="$API_MODEL" --socks_proxy="$SOCKS_PROXY" --host="$HOST" --port="$PORT"
+# The default port number for the backend service is 3002, which can be modified using the --port parameter.
 ```
 
 ### Frontend
-Run the following command in the root directory
+
+Run the following command in the root directory.
+
 ```shell
+# The default port for the frontend web page is 1002 and the default port for the backend service is 3002. You can modify them in the .env and .vite.config.ts files.
 pnpm bootstrap
-```
-
-## Run in Test Environment
-### Backend Service
-
-Enter the `/service` folder and run the following command
-
-```shell
-pnpm start
-```
-
-### Frontend Webpage
-Run the following command in the root directory
-```shell
 pnpm dev
 ```
 
-## Packaging
+## Building Docker Containers
 
-### Using Docker
+### Frontend Build (Requires Node, Docker, and Docker Compose)
 
-#### Docker Parameter Example
+1. Run the following command at the root of the project:
 
-- `OPENAI_API_KEY` one of two
-- `OPENAI_ACCESS_TOKEN` one of two, `OPENAI_API_KEY` takes precedence when both are present
-- `OPENAI_API_BASE_URL` optional, available when `OPENAI_API_KEY` is set
-- `API_REVERSE_PROXY` optional, available when `OPENAI_ACCESS_TOKEN` is set [Reference](#introduction)
-- `TIMEOUT_MS` timeout, in milliseconds, optional
-- `SOCKS_PROXY_HOST` optional, effective with SOCKS_PROXY_PORT
-- `SOCKS_PROXY_PORT` optional, effective with SOCKS_PROXY_HOST
+	```shell
+	pnpm run build
+	```
 
-![docker](./docs/docker.png)
 
-#### Docker Build & Run
+2. Copy the built `dist` folder to `/docker-compose/nginx` and rename it to `html`:
 
-```bash
-docker build -t chatgpt-web .
+	```shell
+	cp dist/ docker-compose/nginx/ -r
+	```
 
-# foreground operation
-docker run --name chatgpt-web --rm -it -p 3002:3002 --env OPENAI_API_KEY=your_api_key chatgpt-web
+3. Edit the `/docker-compose/nginx/nginx.conf` file and replace the server_name with **your server IP**.
 
-# background operation
-docker run --name chatgpt-web -d -p 3002:3002 --env OPENAI_API_KEY=your_api_key chatgpt-web
+4. Run the following command at `/docker-compose/nginx`:
 
-# running address
-http://localhost:3002/
-```
+	```shell
+	 docker build -t chatgpt-web-frontend .
+	```
 
-#### Docker Compose
 
-[Hub Address](https://hub.docker.com/repository/docker/chenzhaoyu94/chatgpt-web/general)
+### Backend Build
 
-```yml
-version: '3'
+1. Enter the `/service` directory and run the following command
 
-services:
-  app:
-    image: chenzhaoyu94/chatgpt-web # always use latest, pull the tag image again when updating
-    ports:
-      - 3002:3002
-    environment:
-      # one of two
-      OPENAI_API_KEY: xxxxxx
-      # one of two
-      OPENAI_ACCESS_TOKEN: xxxxxx
-      # api interface url, optional, available when OPENAI_API_KEY is set
-      OPENAI_API_BASE_URL: xxxx
-      # reverse proxy, optional
-      API_REVERSE_PROXY: xxx
-      # timeout, in milliseconds, optional
-      TIMEOUT_MS: 60000
-      # socks proxy, optional, effective with SOCKS_PROXY_PORT
-      SOCKS_PROXY_HOST: xxxx
-      # socks proxy port, optional, effective with SOCKS_PROXY_HOST
-      SOCKS_PROXY_PORT: xxxx
-```
-The `OPENAI_API_BASE_URL` is optional and only used when setting the `OPENAI_API_KEY`.
+	```shell
+	docker build -t chatgpt-web-backend .
+	```
 
-### Deployment with Railway
+### Starting with Docker Compose
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/yytmgc)
+- Go to the folder `/docker-compose` and modify the `docker-compose.yml` file
 
-#### Railway Environment Variables
+	```
+  version: '3'
+  services:
+    app:
+      image: chatgpt-web-backend # the name of your backend service image here
+      ports:
+        - 3002:3002
+      environment:
+        OPENAI_API_KEY: your_openai_api_key
+        # Optional, default value is gpt-3.5-turbo
+        API_MODEL: gpt-3.5-turbo
+        # Socks proxy, optional, format is http://127.0.0.1:10808
+        SOCKS_PROXY: xxxx
+        # HOST, optional, default value is 0.0.0.0
+        HOST: 0.0.0.0
+        # PORT, optional, default value is 3002
+        PORT: 3002
+    nginx:
+      build: nginx
+      image: chatgpt-web-frontend # the name of your frontend service image here
+      ports:
+        - '80:80'
+      expose:
+        - '80'
+      volumes:
+        - ./nginx/html/:/etc/nginx/html/
+      links:
+        - app
+	```
 
-| Environment Variable | Required | Description                                                                                       |
-| -------------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| `PORT`               | Required | Default: `3002`                                                                                   |
-| `TIMEOUT_MS`         | Optional | Timeout in milliseconds.                                                                          |
-| `OPENAI_API_KEY`     | Optional | Required for `OpenAI API`. `apiKey` can be obtained from [here](https://platform.openai.com/overview). |
-| `OPENAI_ACCESS_TOKEN`| Optional | Required for `Web API`. `accessToken` can be obtained from [here](https://chat.openai.com/api/auth/session).|
-| `OPENAI_API_BASE_URL`  | Optional, only for `OpenAI API` |  API endpoint.                                                        |
-| `API_REVERSE_PROXY`  | Optional, only for `Web API` | Reverse proxy address for `Web API`. [Details](https://github.com/transitive-bullshit/chatgpt-api#reverse-proxy) |
-| `SOCKS_PROXY_HOST`   | Optional, effective with `SOCKS_PROXY_PORT` | Socks proxy.                      |
-| `SOCKS_PROXY_PORT`   | Optional, effective with `SOCKS_PROXY_HOST` | Socks proxy port.                 |
+- Go to the folder `/docker-compose` and run:
 
-> Note: Changing environment variables in Railway will cause re-deployment.
+	```shell
+	docker-compose up
+	# or
+	docker-compose up -d
+	```
 
-### Manual packaging
+## Starting with DockerHub
 
-#### Backend service
+- If you do not want to package the image yourself, you can use the pre-packaged image that I have created. You only
+	need to modify `OPENAI_API_KEY` in `docker-compose.yml`
 
-> If you don't need the `node` interface of this project, you can skip the following steps.
+	```
+	version: '3'
 
-Copy the `service` folder to a server that has a `node` service environment.
+	services:
+	  app:
+      image: wenjing95/chatgpt-web-backend
+      ports:
+        - 3002:3002
+      environment:
+        OPENAI_API_KEY: your_openai_api_key
+        # Optional, defaults to gpt-3.5-turbo
+        API_MODEL: gpt-3.5-turbo
+        # Socks proxy, optional, format: http://127.0.0.1:10808
+        SOCKS_PROXY: xxxx
+        # HOST, optional, defaults to 0.0.0.0
+        HOST: 0.0.0.0
+        # PORT, optional, defaults to 3002
+        PORT: 3002
+    nginx:
+      build: nginx
+      image: wenjing95/chatgpt-web-frontend
+      ports:
+        - '80:80'
+      expose:
+        - '80'
+      volumes:
+        - ./nginx/html/:/etc/nginx/html/
+      links:
+        - app
+	```
 
-```shell
-# Install
-pnpm install
+- Go to the folder `/docker-compose` and run:
 
-# Build
-pnpm build
+	```shell
+	docker-compose up
+	# or
+	docker-compose up -d
+	```
 
-# Run
-pnpm prod
-```
+## FAQ
 
-PS: You can also run `pnpm start` directly on the server without packaging.
+Q: Why do I always get errors when committing to git？
 
-#### Frontend webpage
+A: There is a commit message validation, please follow the [Commit Guidelines](./CONTRIBUTING.md)
 
-1. Modify `VITE_APP_API_BASE_URL` in `.env` at the root directory to your actual backend interface address.
-2. Run the following command in the root directory and then copy the files in the `dist` folder to the root directory of your website service.
+Q: If I only use the front-end page, where can I change the request interface?
 
-[Reference information](https://cn.vitejs.dev/guide/static-deploy.html#building-the-app)
+A: In the `.env` file in the root directory, modify the `VITE_GLOB_API_URL` field.
 
-```shell
-pnpm build
-```
+Q: Why is the typing effect not working in the front-end?
 
-## Frequently Asked Questions
+A: For vscode, please install the recommended plugins of the project, or manually install the Eslint plugin.
 
-Q: Why does Git always report an error when committing?
+Q: Why there is no typewriter effect in the frontend?
 
-A: Because there is submission information verification, please follow the [Commit Guidelines](./CONTRIBUTING.en.md).
+A: One possible reason is that when going through the Nginx reverse proxy, buffering is enabled, so Nginx will try to
+buffer a certain amount of data from the backend before sending it to the browser. Try adding proxy_buffering off; after
+the reverse proxy parameters and then reloading Nginx. The same applies to other web server configurations.
 
-Q: Where to change the request interface if only the frontend page is used?
+Q: Why is the recording function not working?
 
-A: The `VITE_GLOB_API_URL` field in the `.env` file at the root directory.
+A: The recording function requires a secure HTTPS environment. It is recommended to use Cloudflare's free HTTPS
+certificate.
 
-Q: All red when saving the file?
+## Build
 
-A: For `vscode`, please install the recommended plug-in of the project or manually install the `Eslint` plug-in.
-
-Q: Why doesn't the frontend have a typewriter effect?
-
-A: One possible reason is that after Nginx reverse proxying, buffering is turned on, and Nginx will try to buffer a certain amount of data from the backend before sending it to the browser. Please try adding `proxy_buffering off;` after the reverse proxy parameter and then reloading Nginx. Other web server configurations are similar.
-
-## Contributing
-
-Please read the [Contributing Guidelines](./CONTRIBUTING.en.md) before contributing.
-
-Thanks to all the contributors!
+Thank you to the original author [Chanzhaoyu](https://github.com/Chanzhaoyu/chatgpt-web/) and all the contributors, as
+well as the productivity tools `ChatGpt` and `Github Copilot`!
 
 <a href="https://github.com/Chanzhaoyu/chatgpt-web/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Chanzhaoyu/chatgpt-web" />
 </a>
 
-## Sponsorship
+## Support
 
-If you find this project helpful and circumstances permit, you can give me a little support. Thank you very much for your support~
+If you find this project helpful, please give it a star.
 
-<div style="display: flex; gap: 20px;">
-	<div style="text-align: center">
-		<img style="max-width: 100%" src="./docs/wechat.png" alt="WeChat" />
-		<p>WeChat Pay</p>
-	</div>
-	<div style="text-align: center">
-		<img style="max-width: 100%" src="./docs/alipay.png" alt="Alipay" />
-		<p>Alipay</p>
-	</div>
-</div>
+If possible, please support the original author [Chanzhaoyu](https://github.com/Chanzhaoyu/chatgpt-web/)
 
 ## License
-MIT © [ChenZhaoYu](./license)
+
+MIT © [WenJing95](./license)
+
+
+> This document was translated by chatgpt

@@ -1,6 +1,4 @@
-FROM hub.c.163.com/library/nginx
-
-MAINTAINER jo "tionsin@live.com"
+FROM nginx
 
 RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf

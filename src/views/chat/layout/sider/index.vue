@@ -16,6 +16,7 @@ const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
   chatStore.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
+  appStore.setFocusTextarea()
 }
 
 function handleUpdateCollapsed() {
@@ -69,7 +70,7 @@ watch(
       <main class="flex flex-col flex-1 min-h-0">
         <div class="p-4">
           <NButton dashed block @click="handleAdd">
-            New chat
+            {{ $t("chat.newChat") }}
           </NButton>
         </div>
         <div class="flex-1 min-h-0 pb-4 overflow-hidden">

@@ -1,15 +1,16 @@
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { NButton, NInput, useDialog } from 'naive-ui'
+import Recorder from 'recorder-core/recorder.mp3.min'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore } from '@/store'
-import { fetchChatAPIProcess } from '@/api'
+import { useAppStore, useChatStore, useUserStore } from '@/store'
+import { fetchAudioChatAPIProcess, fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 
 let controller = new AbortController()
@@ -18,6 +19,11 @@ const route = useRoute()
 const dialog = useDialog()
 
 const chatStore = useChatStore()
+const userStore = useUserStore()
+const appStore = useAppStore()
+
+const userInfo = computed(() => userStore.userInfo)
+const focusTextarea = computed(() => appStore.focusTextarea)
 
 useCopyCode()
 const { isMobile } = useBasicLayout()
@@ -30,10 +36,170 @@ const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !item.error)))
 
 const prompt = ref<string>('')
+const isAudioPrompt = ref<boolean>(false)
 const loading = ref<boolean>(false)
+const recProtectionPeriod = ref<boolean>(false)
+const sendingRecord = ref<boolean>(false)
+const recording = ref<boolean>(false)
+const audioMode = ref<boolean>(false)
 
 function handleSubmit() {
   onConversation()
+}
+
+let rec = new Recorder()
+const recOpen = function (success: Function) {
+  rec = Recorder({
+    type: 'mp3',
+    sampleRate: 16000,
+    bitRate: 16,
+    onProcess() {
+    },
+  })
+
+  rec.open(() => {
+    success && success()
+    // },function(msg:string,isUserNotAllow:boolean){
+  }, () => {
+    dialog.warning({
+      title: t('chat.openMicrophoneFailedTitle'),
+      content: t('chat.openMicrophoneFailedText'),
+    })
+  })
+}
+
+function _recStart() { // 打开了录音后才能进行start、stop调用
+  rec.start()
+  recording.value = true
+  isAudioPrompt.value = true
+
+  // temporarily disable rec button
+  recProtectionPeriod.value = true
+  setTimeout(() => {
+    recProtectionPeriod.value = false
+  }, 2000)
+
+  addChat(
+    +uuid,
+    {
+      dateTime: new Date().toLocaleString(),
+      text: t('chat.recordingInProgress'),
+      loading: true,
+      inversion: true,
+      error: false,
+      conversationOptions: null,
+      requestOptions: { prompt: '', options: null },
+    },
+  )
+  scrollToBottom()
+}
+
+async function recStart() {
+  if (recording.value || loading.value)
+    return
+
+  recOpen(() => {
+    _recStart()
+  })
+}
+
+async function recStop() {
+  if (!rec) {
+    recording.value = false
+    return
+  }
+
+  sendingRecord.value = true
+
+  // rec.stop(async function(blob:Blob,duration:any){
+  rec.stop(async (blob: Blob) => {
+    rec.close()
+    rec = null
+
+    recording.value = false
+    if (!blob)
+      return
+
+    controller = new AbortController()
+
+    let options: Chat.ConversationRequest = {}
+    const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
+
+    if (lastContext)
+      options = { ...lastContext }
+
+    const formData = new FormData()
+    formData.append('audio', blob, 'recording.mp3')
+
+    try {
+      await fetchAudioChatAPIProcess<Chat.ConversationResponse>({
+        formData,
+        options,
+        onDownloadProgress: ({ event }) => {
+          const xhr = event.target
+          const { responseText } = xhr
+
+          prompt.value = responseText
+          isAudioPrompt.value = true
+
+          onConversation()
+        },
+      })
+    }
+    catch (error: any) {
+      const errorMessage = error?.message ?? t('common.wrong')
+
+      if (error.message === 'canceled') {
+        updateChatSome(
+          +uuid,
+          dataSources.value.length - 1,
+          {
+            loading: false,
+          },
+        )
+        scrollToBottom()
+        return
+      }
+
+      const currentChat = getChatByUuidAndIndex(+uuid, dataSources.value.length - 1)
+
+      if (currentChat?.text && currentChat.text !== '') {
+        updateChatSome(
+          +uuid,
+          dataSources.value.length - 1,
+          {
+            text: `${currentChat.text}\n[${errorMessage}]`,
+            error: false,
+            loading: false,
+          },
+        )
+        return
+      }
+
+      updateChat(
+        +uuid,
+        dataSources.value.length - 1,
+        {
+          dateTime: new Date().toLocaleString(),
+          text: errorMessage,
+          inversion: false,
+          error: true,
+          loading: false,
+          conversationOptions: null,
+          requestOptions: { prompt: '', options: { ...options } },
+        },
+      )
+      scrollToBottom()
+    }
+    finally {
+      recording.value = false
+    }
+    // },function(msg:string){
+  }, () => {
+    // console.log("rec error:"+msg);
+    rec.close()
+    rec = null
+  })
 }
 
 async function onConversation() {
@@ -47,18 +213,37 @@ async function onConversation() {
 
   controller = new AbortController()
 
-  addChat(
-    +uuid,
-    {
-      dateTime: new Date().toLocaleString(),
-      text: message,
-      inversion: true,
-      error: false,
-      conversationOptions: null,
-      requestOptions: { prompt: message, options: null },
-    },
-  )
+  if (isAudioPrompt.value) {
+    updateChat(
+      +uuid,
+      dataSources.value.length - 1,
+      {
+        dateTime: new Date().toLocaleString(),
+        text: message ?? '',
+        inversion: true,
+        error: false,
+        loading: false,
+        conversationOptions: null,
+        requestOptions: { prompt: message, options: null },
+      },
+    )
+  }
+  else {
+    addChat(
+      +uuid,
+      {
+        dateTime: new Date().toLocaleString(),
+        text: message,
+        inversion: true,
+        error: false,
+        conversationOptions: null,
+        requestOptions: { prompt: message, options: null },
+      },
+    )
+  }
   scrollToBottom()
+
+  isAudioPrompt.value = false
 
   loading.value = true
   prompt.value = ''
@@ -86,6 +271,8 @@ async function onConversation() {
   try {
     await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: message,
+      memory: userInfo.value.chatgpt_memory,
+      top_p: userInfo.value.chatgpt_top_p,
       options,
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -166,6 +353,7 @@ async function onConversation() {
   }
   finally {
     loading.value = false
+    sendingRecord.value = false
   }
 }
 
@@ -203,6 +391,8 @@ async function onRegenerate(index: number) {
   try {
     await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: message,
+      memory: userInfo.value.chatgpt_memory,
+      top_p: userInfo.value.chatgpt_top_p,
       options,
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -268,6 +458,17 @@ async function onRegenerate(index: number) {
   }
 }
 
+watch(
+  focusTextarea,
+  () => {
+    setTimeout(() => {
+      const textarea = document.documentElement.querySelector('.n-input__textarea-el') as HTMLInputElement
+      if (textarea)
+        textarea.focus()
+    }, 0)
+  },
+)
+
 function handleDelete(index: number) {
   if (loading.value)
     return
@@ -314,6 +515,13 @@ function handleStop() {
   }
 }
 
+function handleRec() {
+  if (recording.value === true)
+    recStop()
+  else
+    recStart()
+}
+
 const placeholder = computed(() => {
   if (isMobile.value)
     return t('chat.placeholderMobile')
@@ -322,6 +530,10 @@ const placeholder = computed(() => {
 
 const buttonDisabled = computed(() => {
   return loading.value || !prompt.value || prompt.value.trim() === ''
+})
+
+const recButtonDisabled = computed(() => {
+  return recProtectionPeriod.value || sendingRecord.value
 })
 
 const wrapClass = computed(() => {
@@ -360,7 +572,7 @@ onUnmounted(() => {
           <template v-if="!dataSources.length">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl" />
-              <span>Aha~</span>
+              <span>ChatGpt Web</span>
             </div>
           </template>
           <template v-else>
@@ -381,7 +593,7 @@ onUnmounted(() => {
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
                   </template>
-                  Stop Responding
+                  {{ $t('chat.stopResponding') }}
                 </NButton>
               </div>
             </div>
@@ -397,13 +609,32 @@ onUnmounted(() => {
               <SvgIcon icon="ri:delete-bin-line" />
             </span>
           </HoverButton>
+          <HoverButton
+            @click="audioMode = !audioMode"
+          >
+            <span class="text-xl text-[#4f555e] dark:text-white">
+              <SvgIcon icon="ph:microphone-bold" />
+            </span>
+          </HoverButton>
           <NInput
+            v-if="!audioMode"
             v-model:value="prompt"
+            autofocus
             type="textarea"
-            :autosize="{ minRows: 1, maxRows: 2 }"
+            :autosize="{ minRows: 1.4, maxRows: 10 }"
             :placeholder="placeholder"
             @keypress="handleEnter"
           />
+          <NButton
+            v-if="audioMode"
+            :disabled="recButtonDisabled"
+            style="flex-grow: 2;"
+            type="default"
+            @click="handleRec"
+          >
+            <span v-if="recording">{{ $t('chat.clickToSend') }}</span>
+            <span v-if="!recording">{{ $t('chat.clickToTalk') }}</span>
+          </NButton>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">

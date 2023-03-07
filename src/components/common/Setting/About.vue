@@ -3,10 +3,10 @@ import { onMounted, ref } from 'vue'
 import { NSpin } from 'naive-ui'
 import { fetchChatConfig } from '@/api'
 import pkg from '@/../package.json'
+import { SvgIcon } from '@/components/common'
 
 interface ConfigState {
   timeoutMs?: number
-  reverseProxy?: string
   apiModel?: string
   socksProxy?: string
 }
@@ -20,6 +20,9 @@ async function fetchConfig() {
     loading.value = true
     const { data } = await fetchChatConfig<ConfigState>()
     config.value = data
+  }
+  catch (e) {
+
   }
   finally {
     loading.value = false
@@ -35,26 +38,21 @@ onMounted(() => {
   <NSpin :show="loading">
     <div class="p-4 space-y-4">
       <h2 class="text-xl font-bold">
-        Version - {{ pkg.version }}
+        ChatGpt Web - {{ pkg.version }}
       </h2>
+      <a
+        href="https://github.com/WenJing95/chatgpt-web"
+        target="_blank"
+        class="text-[#4b9e5f] relative flex items-center"
+      >
+        View Source Code
+        <SvgIcon class="text-lg text-[#4b9e5f] ml-1" icon="carbon:logo-github" />
+      </a>
       <div class="p-2 space-y-2 rounded-md bg-neutral-100 dark:bg-neutral-700">
-        <p>
-          此项目开源于
-          <a
-            class="text-blue-600 dark:text-blue-500"
-            href="https://github.com/Chanzhaoyu/chatgpt-web"
-            target="_blank"
-          >
-            Github
-          </a>
-          ，免费且基于 MIT 协议，没有任何形式的付费行为！
-        </p>
-        <p>
-          如果你觉得此项目对你有帮助，请在 Github 帮我点个 Star 或者给予一点赞助，谢谢！
-        </p>
+        <p v-text="$t(&quot;common.about_head&quot;)" />
+        <p v-text="$t(&quot;common.about_body&quot;)" />
       </div>
       <p>{{ $t("setting.api") }}：{{ config?.apiModel ?? '-' }}</p>
-      <p>{{ $t("setting.reverseProxy") }}：{{ config?.reverseProxy ?? '-' }}</p>
       <p>{{ $t("setting.timeout") }}：{{ config?.timeoutMs ?? '-' }}</p>
       <p>{{ $t("setting.socks") }}：{{ config?.socksProxy ?? '-' }}</p>
     </div>

@@ -2,6 +2,7 @@
 import { computed, nextTick } from 'vue'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
+import { useBasicLayout } from '@/hooks/useBasicLayout'
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
@@ -24,6 +25,8 @@ function onScrollToBottom() {
   if (scrollRef)
     nextTick(() => scrollRef.scrollTop = scrollRef.scrollHeight)
 }
+
+const { isMobile } = useBasicLayout()
 </script>
 
 <template>
@@ -45,11 +48,16 @@ function onScrollToBottom() {
         {{ currentChatHistory?.title ?? '' }}
       </h1>
       <button
+        v-if="!isMobile"
         class="flex items-center justify-center w-11 h-11"
         @click="onScrollToBottom"
       >
         <SvgIcon class="text-2xl" icon="ri:arrow-down-s-line" />
       </button>
+      <button
+        v-if="isMobile"
+        class="flex items-center justify-center w-11 h-11"
+      />
     </div>
   </header>
 </template>

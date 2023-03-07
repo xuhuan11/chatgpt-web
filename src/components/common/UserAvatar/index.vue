@@ -4,6 +4,7 @@ import { NAvatar } from 'naive-ui'
 import { useUserStore } from '@/store'
 import defaultAvatar from '@/assets/avatar.jpg'
 import { isString } from '@/utils/is'
+import { SvgIcon } from '@/components/common'
 
 const userStore = useUserStore()
 
@@ -26,14 +27,32 @@ const userInfo = computed(() => userStore.userInfo)
       </template>
     </div>
     <div class="ml-2">
-      <h2 class="font-bold text-md">
-        {{ userInfo.name ?? 'ChenZhaoYu' }}
+      <h2 class="font-bold text-md flex ">
+        ChatGPT Web
       </h2>
       <p class="text-xs text-gray-500">
         <span
           v-if="isString(userInfo.description) && userInfo.description !== ''"
-          v-html="userInfo.description"
+          v-text="userInfo.description"
         />
+        <span
+          v-else
+        >
+          <p>Forked and modified</p>
+          <p>from Chanzhaoyu</p>
+          <p>by WenJing</p>
+        </span>
+
+        <span>
+          <a
+            href="https://github.com/WenJing95/chatgpt-web"
+            target="_blank"
+            class="text-[#4b9e5f] relative flex items-center"
+          >
+            View Source Code
+            <SvgIcon class="text-lg text-[#4b9e5f] ml-1" icon="carbon:logo-github" />
+          </a>
+        </span>
       </p>
     </div>
   </div>

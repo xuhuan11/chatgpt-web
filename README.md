@@ -6,262 +6,235 @@
 </div>
 </br>
 
-> 声明：此项目只发布于 Github，基于 MIT 协议，免费且作为开源学习使用。并且不会有任何形式的卖号、付费服务、讨论群、讨论组等行为。谨防受骗。
+> Disclaimer: This project is only released on GitHub, under the MIT License, free and for open-source learning
+purposes. There will be no account selling, paid services, discussion groups, or forums. Beware of fraud.
 
+![cover3](./docs/c3.png)
 ![cover](./docs/c1.png)
 ![cover2](./docs/c2.png)
 
 - [ChatGPT Web](#chatgpt-web)
 	- [介绍](#介绍)
-	- [待实现路线](#待实现路线)
-	- [前置要求](#前置要求)
-		- [Node](#node)
-		- [PNPM](#pnpm)
-		- [填写密钥](#填写密钥)
-	- [安装依赖](#安装依赖)
-		- [后端](#后端)
-		- [前端](#前端)
-	- [测试环境运行](#测试环境运行)
-		- [后端服务](#后端服务)
-		- [前端网页](#前端网页)
-	- [打包](#打包)
-		- [使用 Docker](#使用-docker)
-			- [Docker 参数示例](#docker-参数示例)
-			- [Docker build \& Run](#docker-build--run)
-			- [Docker compose](#docker-compose)
-		- [使用 Railway 部署](#使用-railway-部署)
-			- [Railway 环境变量](#railway-环境变量)
-		- [手动打包](#手动打包)
-			- [后端服务](#后端服务-1)
-			- [前端网页](#前端网页-1)
+	- [一键部署](#一键部署)
+	- [开发环境搭建](#开发环境搭建)
+		- [Node](#Node)
+		- [PNPM](#PNPM)
+		- [Python](#Python)
+	- [开发环境启动项目](#开发环境启动项目)
+		- [后端](#后端服务)
+		- [前端](#前端网页)
+	- [打包为docker容器](#打包为docker容器)
+		- [前端打包](#前端资源打包(需要安装node和docker、docker-compose))
+		- [后端打包](#后端服务打包)
+	- [使用Docker compose启动](#使用Docker compose启动)
 	- [常见问题](#常见问题)
 	- [参与贡献](#参与贡献)
-	- [赞助](#赞助)
+	- [赞助原作者](#赞助)
 	- [License](#license)
+
 ## 介绍
 
-支持双模型，提供了两种非官方 `ChatGPT API` 方法
+这是一个可以自己在本地部署的`ChatGpt Web`
+页面，Fork和修改于[Chanzhaoyu/chatgpt-web](https://github.com/Chanzhaoyu/chatgpt-web/)，使用`OpenAI`
+的官方API接入`gpt-3.5-turbo`模型来实现接近`ChatGPT Plus`的对话效果。
 
-| 方式                                          | 免费？ | 可靠性     | 质量 |
-| --------------------------------------------- | ------ | ---------- | ---- |
-| `ChatGPTAPI(gpt-3.5-turbo-0301)`                           | 否     | 可靠       | 相对较笨 |
-| `ChatGPTUnofficialProxyAPI(网页 accessToken)` | 是     | 相对不可靠 | 聪明 |
+与OpenAI官方提供的付费版本`ChatGPT Plus`对比，`ChatGPT Web`有以下优势：
 
-对比：
-1. `ChatGPTAPI` 使用 `gpt-3.5-turbo-0301` 通过官方`OpenAI`补全`API`模拟`ChatGPT`（最稳健的方法，但它不是免费的，并且没有使用针对聊天进行微调的模型）
-2. `ChatGPTUnofficialProxyAPI` 使用非官方代理服务器访问 `ChatGPT` 的后端`API`，绕过`Cloudflare`（使用真实的的`ChatGPT`，非常轻量级，但依赖于第三方服务器，并且有速率限制）
+1. **省钱**。你可以用1折左右的价格，体验与`ChatGPT Plus`
+	 几乎相同的对话服务。对于日常学习工作使用，你不必每月花费20$购买Plus服务，使用本项目自己对接API的使用成本，是`ChatGPT Plus`
+	 的1/10左右。
+2. **0门槛使用**。你可以将自建的`ChatGPT Web`
+	 站点分享给家人和朋友，他们不再需要经历“解决网络问题”-“登录”-“输入密码”-“点选验证码”这一连串麻烦的环节，就可以轻松享受到`ChatGPT Plus`
+	 带来的生产力提升。
+3. **可以缓解网络封锁的影响**。`ChatGPT Web`只需要一个`OpenAI API Key`即可使用，如果你所在的地区无法访问`OpenAI`
+	 ，你可以将`ChatGPT Web`部署在海外服务器上，或在当地服务器上使用`Socks5`代理来转发请求给代理软件，即可正常使用。
 
-[查看详情](https://github.com/Chanzhaoyu/chatgpt-web/issues/138)
+和[Chanzhaoyu的原版](https://github.com/Chanzhaoyu/chatgpt-web/)的主要区别：
 
-切换方式：
-1. 进入 `service/.env` 文件
-2. 使用 `OpenAI API Key` 请填写 `OPENAI_API_KEY` 字段 [(获取 apiKey)](https://platform.openai.com/overview)
-3. 使用 `Web API` 请填写 `OPENAI_ACCESS_TOKEN` 字段 [(获取 accessToken)](https://chat.openai.com/api/auth/session)
-4. 同时存在时以 `OpenAI API Key` 优先
+1. 可以识别语音消息：通过接入`whisper-1`API实现
+2. 可以微调参数：通过设置可以节省token消耗量、让`ChatGpt`更准确地回答问题
+3. `ChatGpt Web`现在可以“记住”更多的上下文：服务器端将聊天记录被持久化保存
+4. 去掉了`ChatGPTUnofficialProxyAPI`和反向代理功能：考虑到使用者并非都有精力折腾，因此只保留了官方API的方式。
 
-反向代理：
+其它更新：
 
-`ChatGPTUnofficialProxyAPI`时可用，[详情](https://github.com/transitive-bullshit/chatgpt-api#reverse-proxy)
+1. 可以随机生成头像
+2. 增加日语界面
+3. 优化了一点移动端体验
+4. 后端使用python重写（因为我不会nodejs）
 
-```shell
-# service/.env
-API_REVERSE_PROXY=
-```
+## 一键部署
 
-环境变量：
+如果你不需要自己开发，只需要部署使用，可以直接跳到 [使用最新版本docker镜像启动](#使用最新版本docker镜像启动)
 
-全部参数变量请查看或[这里](#docker-参数示例)
-
-```
-/service/.env
-```
-
-## 待实现路线
-[✓] 双模型
-
-[✓] 多会话储存和上下文逻辑
-
-[✓] 对代码等消息类型的格式化美化处理
-
-[✓] 界面多语言
-
-[✓] 界面主题
-
-[✗] More...
-
-## 前置要求
+## 开发环境搭建
 
 ### Node
 
-`node` 需要 `^16 || ^18` 版本（`node >= 14` 需要安装 [fetch polyfill](https://github.com/developit/unfetch#usage-as-a-polyfill)），使用 [nvm](https://github.com/nvm-sh/nvm) 可管理本地多个 `node` 版本
+`node` 需要 `^16 || ^18` 版本（`node >= 14`
+需要安装 [fetch polyfill](https://github.com/developit/unfetch#usage-as-a-polyfill)
+），使用 [nvm](https://github.com/nvm-sh/nvm) 可管理本地多个 `node` 版本
 
 ```shell
 node -v
 ```
 
 ### PNPM
+
 如果你没有安装过 `pnpm`
+
 ```shell
 npm install pnpm -g
 ```
 
-### 填写密钥
-获取 `Openai Api Key` 或 `accessToken` 并填写本地环境变量 [跳转](#介绍)
+### Python
 
-```
-# service/.env 文件
-
-# OpenAI API Key - https://platform.openai.com/overview
-OPENAI_API_KEY=
-
-# change this to an `accessToken` extracted from the ChatGPT site's `https://chat.openai.com/api/auth/session` response
-OPENAI_ACCESS_TOKEN=
-```
-
-## 安装依赖
-
-> 为了简便 `后端开发人员` 的了解负担，所以并没有采用前端 `workspace` 模式，而是分文件夹存放。如果只需要前端页面做二次开发，删除 `service` 文件夹即可。
-
-### 后端
-
-进入文件夹 `/service` 运行以下命令
+`python` 需要 `3.10` 以上版本，进入文件夹 `/service` 运行以下命令
 
 ```shell
-pnpm install
+pip install --no-cache-dir -r requirements.txt
 ```
 
-### 前端
-根目录下运行以下命令
-```shell
-pnpm bootstrap
-```
+## 开发环境启动项目
 
-## 测试环境运行
 ### 后端服务
 
-进入文件夹 `/service` 运行以下命令
+只有`OPENAI_API_KEY`是必填的，需要先去[OpenAI](https://platform.openai.com/)
+注册账号，然后在[这里](https://platform.openai.com/account/api-keys)获取`OPENAI_API_KEY`。
 
 ```shell
-pnpm start
+# 进入文件夹 `/service` 运行以下命令
+python main.py --openai_api_key="$OPENAI_API_KEY" --api_model="$API_MODEL" --socks_proxy="$SOCKS_PROXY" --host="$HOST" --port="$PORT"
+# 后端服务的默认端口号是3002，可以通过 --port 参数修改
 ```
 
 ### 前端网页
+
 根目录下运行以下命令
+
 ```shell
+# 前端网页的默认端口号是1002，对接的后端服务的默认端口号是3002，可以在 .env 和 .vite.config.ts 文件中修改
+pnpm bootstrap
 pnpm dev
 ```
 
-## 打包
+## 打包为docker容器
 
-### 使用 Docker
+### 前端资源打包(需要安装node和docker、docker-compose)
 
-#### Docker 参数示例
+1. 根目录下运行以下命令
+	 ```shell
+	 pnpm run build
+	 ```
+2. 将打包好的文件夹`dist`文件夹复制到`/docker-compose/nginx`目录下，并改名为`html`
+	```shell
+	cp dist/ docker-compose/nginx/ -r
+	```
 
-- `OPENAI_API_KEY` 二选一
-- `OPENAI_ACCESS_TOKEN`  二选一，同时存在时，`OPENAI_API_KEY` 优先
-- `OPENAI_API_BASE_URL`  可选，设置 `OPENAI_API_KEY` 时可用
-- `API_REVERSE_PROXY` 可选，设置 `OPENAI_ACCESS_TOKEN` 时可用 [参考](#介绍)
-- `TIMEOUT_MS` 超时，单位毫秒，可选
-- `SOCKS_PROXY_HOST` 可选，和 SOCKS_PROXY_PORT 一起时生效
-- `SOCKS_PROXY_PORT` 可选，和 SOCKS_PROXY_HOST 一起时生效
+3. 修改`/docker-compose/nginx/nginx.conf`文件，填写你的服务器IP
 
-![docker](./docs/docker.png)
+4. 在`/docker-compose/nginx`目录下运行以下命令
+	```shell
+	docker build -t chatgpt-web-frontend .
+	```
 
-#### Docker build & Run
+### 后端服务打包
 
-```bash
-docker build -t chatgpt-web .
+1. 进入文件夹 `/service` 运行以下命令
+	 ```shell
+	 docker build -t chatgpt-web-backend .
+	 ```
 
-# 前台运行
-docker run --name chatgpt-web --rm -it -p 3002:3002 --env OPENAI_API_KEY=your_api_key chatgpt-web
+### 使用Docker compose启动
 
-# 后台运行
-docker run --name chatgpt-web -d -p 3002:3002 --env OPENAI_API_KEY=your_api_key chatgpt-web
+- 进入文件夹 `/docker-compose` 修改 `docker-compose.yml` 文件
 
-# 运行地址
-http://localhost:3002/
-```
+	```
+  version: '3'
 
-#### Docker compose
+  services:
+    app:
+      image: chatgpt-web-backend # 这里填你打包的后端服务的镜像名字
+      ports:
+        - 3002:3002
+      environment:
+        OPENAI_API_KEY: your_openai_api_key
+        # 可选，默认值为 gpt-3.5-turbo
+        API_MODEL: gpt-3.5-turbo
+        # Socks代理，可选，格式为 http://127.0.0.1:10808
+        SOCKS_PROXY: xxxx
+        # HOST，可选，默认值为 0.0.0.0
+        HOST: 0.0.0.0
+        # PORT，可选，默认值为 3002
+        PORT: 3002
+    nginx:
+      build: nginx
+      image: chatgpt-web-frontend # 这里填你打包的后端服务的镜像名字
+      ports:
+        - '80:80'
+      expose:
+        - '80'
+      volumes:
+        - ./nginx/html/:/etc/nginx/html/
+      links:
+        - app
+	```
 
-[Hub 地址](https://hub.docker.com/repository/docker/chenzhaoyu94/chatgpt-web/general)
+- 进入文件夹 `/docker-compose` 运行以下命令
 
-```yml
-version: '3'
+	```shell
+	# 前台运行
+	docker-compose up
+	# 或后台运行
+	docker-compose up -d
+	```
 
-services:
-  app:
-    image: chenzhaoyu94/chatgpt-web # 总是使用 latest ,更新时重新 pull 该 tag 镜像即可
-    ports:
-      - 3002:3002
-    environment:
-      # 二选一
-      OPENAI_API_KEY: xxxxxx
-      # 二选一
-      OPENAI_ACCESS_TOKEN: xxxxxx
-      # API接口地址，可选，设置 OPENAI_API_KEY 时可用
-      OPENAI_API_BASE_URL: xxxx
-      # 反向代理，可选
-      API_REVERSE_PROXY: xxx
-      # 超时，单位毫秒，可选
-      TIMEOUT_MS: 60000
-      # Socks代理，可选，和 SOCKS_PROXY_PORT 一起时生效
-      SOCKS_PROXY_HOST: xxxx
-      # Socks代理端口，可选，和 SOCKS_PROXY_HOST 一起时生效
-      SOCKS_PROXY_PORT: xxxx
-```
-- `OPENAI_API_BASE_URL`  可选，设置 `OPENAI_API_KEY` 时可用
-###  使用 Railway 部署
+## 使用最新版本docker镜像启动
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/yytmgc)
+- 如果你不想自己打包镜像，可以直接使用我已经打包好的镜像，只需要在`docker-compose.yml`中修改`OPENAI_API_KEY`即可。
 
-#### Railway 环境变量
+	```
+	version: '3'
 
-| 环境变量名称          | 必填                   | 备注                                                                                               |
-| --------------------- | ---------------------- | -------------------------------------------------------------------------------------------------- |
-| `PORT`                | 必填                   | 默认 `3002`                                                                                        |
-| `TIMEOUT_MS`          | 可选                   | 超时时间，单位毫秒，                                                                               |
-| `OPENAI_API_KEY`      | `OpenAI API` 二选一    | 使用 `OpenAI API` 所需的 `apiKey` [(获取 apiKey)](https://platform.openai.com/overview)            |
-| `OPENAI_ACCESS_TOKEN` | `Web API` 二选一       | 使用 `Web API` 所需的 `accessToken` [(获取 accessToken)](https://chat.openai.com/api/auth/session) |
-| `OPENAI_API_BASE_URL`   | 可选，`OpenAI API` 时可用 |  `API`接口地址  |
-| `API_REVERSE_PROXY`   | 可选，`Web API` 时可用 | `Web API` 反向代理地址 [详情](https://github.com/transitive-bullshit/chatgpt-api#reverse-proxy)    |
-| `SOCKS_PROXY_HOST`   | 可选，和 `SOCKS_PROXY_PORT` 一起时生效 | Socks代理    |
-| `SOCKS_PROXY_PORT`   | 可选，和 `SOCKS_PROXY_HOST` 一起时生效 | Socks代理端口    |
+	services:
+	  app:
+      image: wenjing95/chatgpt-web-backend # 总是使用latest,更新时重新pull该tag镜像即可
+      ports:
+        - 3002:3002
+      environment:
+        OPENAI_API_KEY: your_openai_api_key
+        # 可选，默认值为 gpt-3.5-turbo
+        API_MODEL: gpt-3.5-turbo
+        # Socks代理，可选，格式为 http://127.0.0.1:10808
+        SOCKS_PROXY: xxxx
+        # HOST，可选，默认值为 0.0.0.0
+        HOST: 0.0.0.0
+        # PORT，可选，默认值为 3002
+        PORT: 3002
+    nginx:
+      build: nginx
+      image: wenjing95/chatgpt-web-frontend
+      ports:
+        - '80:80'
+      expose:
+        - '80'
+      volumes:
+        - ./nginx/html/:/etc/nginx/html/
+      links:
+        - app
+	```
 
-> 注意: `Railway` 修改环境变量会重新 `Deploy`
+- 进入文件夹 `/docker-compose` 运行以下命令
 
-### 手动打包
-#### 后端服务
-> 如果你不需要本项目的 `node` 接口，可以省略如下操作
-
-复制 `service` 文件夹到你有 `node` 服务环境的服务器上。
-
-```shell
-# 安装
-pnpm install
-
-# 打包
-pnpm build
-
-# 运行
-pnpm prod
-```
-
-PS: 不进行打包，直接在服务器上运行 `pnpm start` 也可
-
-#### 前端网页
-
-1、修改根目录下 `.env` 内 `VITE_APP_API_BASE_URL` 为你的实际后端接口地址
-
-2、根目录下运行以下命令，然后将 `dist` 文件夹内的文件复制到你网站服务的根目录下
-
-[参考信息](https://cn.vitejs.dev/guide/static-deploy.html#building-the-app)
-
-```shell
-pnpm build
-```
+	```shell
+	# 前台运行
+	docker-compose up
+	# 或后台运行
+	docker-compose up -d
+	```
 
 ## 常见问题
+
 Q: 为什么 `Git` 提交总是报错？
 
 A: 因为有提交信息验证，请遵循 [Commit 指南](./CONTRIBUTING.md)
@@ -276,13 +249,20 @@ A: `vscode` 请安装项目推荐插件，或手动安装 `Eslint` 插件。
 
 Q: 前端没有打字机效果？
 
-A: 一种可能原因是经过 Nginx 反向代理，开启了 buffer，则 Nginx 会尝试从后端缓冲一定大小的数据再发送给浏览器。请尝试在反代参数后添加 `proxy_buffering off;`，然后重载 Nginx。其他 web server 配置同理。
+A: 一种可能原因是经过 Nginx 反向代理，开启了 buffer，则 Nginx
+会尝试从后端缓冲一定大小的数据再发送给浏览器。请尝试在反代参数后添加 `proxy_buffering off;`，然后重载 Nginx。其他 web
+server 配置同理。
+
+Q: 为什么录音功能不能用？
+
+A: 录音需要https环境，推荐使用cloudflare的免费https证书。
 
 ## 参与贡献
 
 贡献之前请先阅读 [贡献指南](./CONTRIBUTING.md)
 
-感谢所有做过贡献的人!
+感谢原作者[Chanzhaoyu](https://github.com/Chanzhaoyu/chatgpt-web/)和所有做过贡献的人，还有生产力工具`ChatGpt`
+和`Github Copilot`!
 
 <a href="https://github.com/Chanzhaoyu/chatgpt-web/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Chanzhaoyu/chatgpt-web" />
@@ -290,18 +270,10 @@ A: 一种可能原因是经过 Nginx 反向代理，开启了 buffer，则 Nginx
 
 ## 赞助
 
-如果你觉得这个项目对你有帮助，并且情况允许的话，可以给我一点点支持，总之非常感谢支持～
+如果你觉得这个项目对你有帮助，请给我点个Star。
 
-<div style="display: flex; gap: 20px;">
-	<div style="text-align: center">
-		<img style="max-width: 100%" src="./docs/wechat.png" alt="微信" />
-		<p>WeChat Pay</p>
-	</div>
-	<div style="text-align: center">
-		<img style="max-width: 100%" src="./docs/alipay.png" alt="支付宝" />
-		<p>Alipay</p>
-	</div>
-</div>
+如果情况允许，请支持原作者[Chanzhaoyu](https://github.com/Chanzhaoyu/chatgpt-web/)
 
 ## License
-MIT © [ChenZhaoYu](./license)
+
+MIT © [WenJing95](./license)

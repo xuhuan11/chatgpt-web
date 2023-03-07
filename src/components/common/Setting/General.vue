@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { NButton, NInput, useMessage } from 'naive-ui'
+import { NButton, NImage, NInput, useMessage } from 'naive-ui'
 import type { Language, Theme } from '@/store/modules/app/helper'
-import { SvgIcon } from '@/components/common'
+import { HoverButton, SvgIcon } from '@/components/common'
 import { useAppStore, useUserStore } from '@/store'
 import type { UserInfo } from '@/store/modules/user/helper'
 import { t } from '@/locales'
@@ -58,10 +58,17 @@ const themeOptions: { label: string; key: Theme; icon: string }[] = [
 const languageOptions: { label: string; key: Language; value: Language }[] = [
   { label: '中文', key: 'zh-CN', value: 'zh-CN' },
   { label: 'English', key: 'en-US', value: 'en-US' },
+  { label: '日本語', key: 'ja-JP', value: 'ja-JP' },
 ]
 
 function updateUserInfo(options: Partial<UserInfo>) {
   userStore.updateUserInfo(options)
+  ms.success(t('common.success'))
+}
+
+function randomAvatar() {
+  const avatar = `https://api.multiavatar.com/${Math.random()}.svg`
+  userStore.updateUserInfo({ avatar })
   ms.success(t('common.success'))
 }
 
@@ -77,7 +84,7 @@ function handleReset() {
     <div class="space-y-6">
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
-        <div class="flex-1">
+        <div class="w-[200px]">
           <NInput v-model:value="avatar" placeholder="" />
         </div>
         <NButton size="tiny" text type="primary" @click="updateUserInfo({ avatar })">
@@ -92,6 +99,21 @@ function handleReset() {
         <NButton size="tiny" text type="primary" @click="updateUserInfo({ name })">
           {{ $t('common.save') }}
         </NButton>
+        <HoverButton :tooltip="$t('setting.randomAvatar')" @click="randomAvatar()">
+          <span class="text-xl text-[#4f555e] dark:text-white">
+            <SvgIcon class="text-lg" icon="mdi:dice-5-outline" />
+          </span>
+        </HoverButton>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[100px]" />
+        <div class="w-[200px]">
+          <NImage
+            v-model:src="userInfo.avatar"
+            width="100"
+            class="rounded-full"
+          />
+        </div>
       </div>
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { NCard, NModal, NTabPane, NTabs } from 'naive-ui'
 import General from './General.vue'
+import Advance from './Advance.vue'
 import About from './About.vue'
 import { SvgIcon } from '@/components/common'
 
@@ -51,9 +52,16 @@ function handleReload() {
             <General v-if="!reload" @update="handleReload" />
           </div>
         </NTabPane>
-        <NTabPane name="Config" tab="Config">
+        <NTabPane name="Advance" tab="Advance">
           <template #tab>
             <SvgIcon class="text-lg" icon="ri:list-settings-line" />
+            <span class="ml-2">{{ $t('setting.advance') }}</span>
+          </template>
+          <Advance />
+        </NTabPane>
+        <NTabPane name="Config" tab="Config">
+          <template #tab>
+            <SvgIcon class="text-lg" icon="mdi:about-circle-outline" />
             <span class="ml-2">{{ $t('setting.config') }}</span>
           </template>
           <About />

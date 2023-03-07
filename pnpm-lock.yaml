@@ -26,6 +26,7 @@ specifiers:
   npm-run-all: ^4.1.5
   pinia: ^2.0.32
   postcss: ^8.4.21
+  recorder-core: ^1.2.23020100
   rimraf: ^4.2.0
   tailwindcss: ^3.2.7
   typescript: ~4.9.5
@@ -43,6 +44,7 @@ dependencies:
   markdown-it: 13.0.1
   naive-ui: 2.34.3_vue@3.2.47
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
+  recorder-core: 1.2.23020100
   vue: 3.2.47
   vue-i18n: 9.2.2_vue@3.2.47
   vue-router: 4.1.6_vue@3.2.47
@@ -4051,6 +4053,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /recorder-core/1.2.23020100:
+    resolution: {integrity: sha512-HUxAPKmP0Q5Rd0Z57ufKGyJmUAB9cZPfe8vg4mckSDwx1JFJ+tln8i+jnGSCOjlKr6tC2UL4ifcWwa7w0jf5pA==}
+    dev: false
 
   /redent/3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}

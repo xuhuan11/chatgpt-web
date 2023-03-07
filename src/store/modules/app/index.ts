@@ -23,6 +23,11 @@ export const useAppStore = defineStore('app-store', {
       }
     },
 
+    setFocusTextarea() {
+      this.focusTextarea = true
+      this.recordState()
+    },
+
     recordState() {
       setLocalSetting(this.$state)
     },
