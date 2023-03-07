@@ -142,7 +142,7 @@ pnpm dev
 	 docker build -t chatgpt-web-backend .
 	 ```
 
-### 使用Docker compose启动
+### 使用DockerCompose启动
 
 - 进入文件夹 `/docker-compose` 修改 `docker-compose.yml` 文件
 
