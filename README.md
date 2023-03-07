@@ -15,7 +15,7 @@ purposes. There will be no account selling, paid services, discussion groups, or
 
 - [ChatGPT Web](#chatgpt-web)
 	- [介绍](#介绍)
-	- [一键部署](#一键部署)
+	- [快速部署](#快速部署)
 	- [开发环境搭建](#开发环境搭建)
 		- [Node](#Node)
 		- [PNPM](#PNPM)
@@ -63,7 +63,7 @@ purposes. There will be no account selling, paid services, discussion groups, or
 3. 优化了一点移动端体验
 4. 后端使用python重写（因为我不会nodejs）
 
-## 一键部署
+## 快速部署
 
 如果你不需要自己开发，只需要部署使用，可以直接跳到 [使用最新版本docker镜像启动](#使用最新版本docker镜像启动)
 
@@ -191,29 +191,49 @@ pnpm dev
 
 ## 使用最新版本docker镜像启动
 
-- 如果你不想自己打包镜像，可以直接使用我已经打包好的镜像，只需要在`docker-compose.yml`中修改`OPENAI_API_KEY`即可。
+- 如果你不想自己打包镜像，可以直接使用我已经打包好的镜像
+
+- 首先你仍然需要自己先将前端资源打包，让我们复习一下流程
+	1. 安装nodejs，版本要求`16`以上
+	2. `npm install pnpm -g`
+	3. `pnpm bootstrap`
+	4. `pnpm run build`
+
+- 然后将打包好的文件夹`dist`文件夹复制到`/docker-compose/nginx`目录下，并改名为`html`
+	```shell
+	cp dist/ docker-compose/nginx/html -r
+	```
+
+- 然后修改`docker-compose/docker-compose.yml`文件。
+
+	除了填写`OPENAI_API_KEY`之外，还要根据自己的系统环境修改`image`的标签
 
 	```
 	version: '3'
 
 	services:
 	  app:
-      image: wenjing95/chatgpt-web-backend # 总是使用latest,更新时重新pull该tag镜像即可
+      # 根据自己的系统选择x86_64还是aarch64
+      image: wenjing95/chatgpt-web-backend:x86_64
+      # image: wenjing95/chatgpt-web-backend:aarch64
       ports:
         - 3002:3002
       environment:
+        # 记得填写你的OPENAI_API_KEY
         OPENAI_API_KEY: your_openai_api_key
         # 可选，默认值为 gpt-3.5-turbo
         API_MODEL: gpt-3.5-turbo
         # Socks代理，可选，格式为 http://127.0.0.1:10808
-        SOCKS_PROXY: xxxx
+        SOCKS_PROXY: “”
         # HOST，可选，默认值为 0.0.0.0
         HOST: 0.0.0.0
         # PORT，可选，默认值为 3002
         PORT: 3002
     nginx:
       build: nginx
-      image: wenjing95/chatgpt-web-frontend
+      # 根据自己的系统选择x86_64还是aarch64
+      image: wenjing95/chatgpt-web-frontend:x86_64
+      # image: wenjing95/chatgpt-web-frontend:aarch64
       ports:
         - '80:80'
       expose:
@@ -224,7 +244,7 @@ pnpm dev
         - app
 	```
 
-- 进入文件夹 `/docker-compose` 运行以下命令
+- 最后进入文件夹 `/docker-compose` 运行以下命令
 
 	```shell
 	# 前台运行
@@ -256,6 +276,10 @@ server 配置同理。
 Q: 为什么录音功能不能用？
 
 A: 录音需要https环境，推荐使用cloudflare的免费https证书。
+
+Q: build docker容器的时候，显示`exec entrypoint.sh: no such file or directory`？
+
+A: 因为`entrypoint.sh`文件的换行符是`LF`，而不是`CRLF`，如果你用`CRLF`的IDE操作过这个文件，可能就会出错。可以使用`dos2unix`工具将`LF`换成`CRLF`。
 
 ## 参与贡献
 

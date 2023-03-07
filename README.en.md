@@ -15,7 +15,7 @@ purposes. There will be no account selling, paid services, discussion groups, or
 
 - [ChatGPT Web](#chatgpt-web)
 	- [Introduction](#Introduction)
-	- [One-click Deployment](#One-click Deployment)
+	- [Fast Deployment](#Fast Deployment)
 	- [Development Environment Setup](#Development Environment Setup)
 		- [Node](#Node)
 		- [PNPM](#PNPM)
@@ -64,7 +64,7 @@ Other updates:
 3. Improved the mobile experience.
 4. The backend has been rewritten in Python (because I can't use Node.js).
 
-## One-click Deployment
+## Fast Deployment
 
 If you don't need to develop, and just want to deploy and use, you can skip
 to [Starting with DockerHub](#Starting with DockerHub)
@@ -198,30 +198,48 @@ pnpm dev
 
 ## Starting with DockerHub
 
-- If you do not want to package the image yourself, you can use the pre-packaged image that I have created. You only
-	need to modify `OPENAI_API_KEY` in `docker-compose.yml`
+- If you don't want to package the image yourself, you can directly use the image I have already packaged.
+
+- First, you still need to package the frontend resources yourself. Let's review the process:
+	1.  install nodejs `^16 || ^18`
+	2. `npm install pnpm -g`
+	3. `pnpm bootstrap`
+	4. `pnpm run build`
+
+- And then copy the packaged dist folder to the `./docker-compose/nginx` directory, and rename it to `html`.
+  ```shell
+	cp dist/ docker-compose/nginx/html -r
+	```
+- Then modify the `./docker-compose/docker-compose.yml` file.
+
+	Other than filling in the `OPENAI_API_KEY`, you also need to modify the tag of the image according to your system environment.
 
 	```
 	version: '3'
 
 	services:
 	  app:
-      image: wenjing95/chatgpt-web-backend
+      # According to your system, choose either x86_64 or aarch64.
+      image: wenjing95/chatgpt-web-backend:x86_64
+      # image: wenjing95/chatgpt-web-backend:aarch64
       ports:
         - 3002:3002
       environment:
+        # Remember to fill in your OPENAI_API_KEY.
         OPENAI_API_KEY: your_openai_api_key
-        # Optional, defaults to gpt-3.5-turbo
+        # Optional, with a default value of gpt-3.5-turbo.
         API_MODEL: gpt-3.5-turbo
-        # Socks proxy, optional, format: http://127.0.0.1:10808
-        SOCKS_PROXY: xxxx
-        # HOST, optional, defaults to 0.0.0.0
+        # Socks proxy, optional, format as http://127.0.0.1:10808.
+        SOCKS_PROXY: “”
+        # HOST, optional, with a default value of 0.0.0.0.
         HOST: 0.0.0.0
-        # PORT, optional, defaults to 3002
+        # PORT, optional, with a default value of 3002.
         PORT: 3002
     nginx:
       build: nginx
-      image: wenjing95/chatgpt-web-frontend
+      # According to your system, choose either x86_64 or aarch64.
+      image: wenjing95/chatgpt-web-frontend:x86_64
+      # image: wenjing95/chatgpt-web-frontend:aarch64
       ports:
         - '80:80'
       expose:
@@ -264,6 +282,10 @@ Q: Why is the recording function not working?
 
 A: The recording function requires a secure HTTPS environment. It is recommended to use Cloudflare's free HTTPS
 certificate.
+
+Q: When building the Docker container, get the error message "exec entrypoint.sh: no such file or directory".
+
+A: This error can occur if the entrypoint.sh file was created using an IDE with CRLF line endings instead of LF. To fix this, you can use the dos2unix tool to convert the line endings from LF to CRLF.
 
 ## Build
 
