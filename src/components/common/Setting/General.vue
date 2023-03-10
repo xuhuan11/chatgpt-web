@@ -83,20 +83,11 @@ function handleReset() {
   <div class="p-4 space-y-5 min-h-[200px]">
     <div class="space-y-6">
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
+        <span class="flex-shrink-0 w-[60px]">{{ $t('setting.avatarLink') }}</span>
         <div class="w-[200px]">
           <NInput v-model:value="avatar" placeholder="" />
         </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ avatar })">
-          {{ $t('common.save') }}
-        </NButton>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.name') }}</span>
-        <div class="w-[200px]">
-          <NInput v-model:value="name" placeholder="" />
-        </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ name })">
+        <NButton size="small" text type="primary" @click="updateUserInfo({ avatar })">
           {{ $t('common.save') }}
         </NButton>
         <HoverButton :tooltip="$t('setting.randomAvatar')" @click="randomAvatar()">
@@ -106,7 +97,7 @@ function handleReset() {
         </HoverButton>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]" />
+        <span class="flex-shrink-0 w-[60px]" />
         <div class="w-[200px]">
           <NImage
             v-model:src="userInfo.avatar"
@@ -115,52 +106,60 @@ function handleReset() {
           />
         </div>
       </div>
+
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
-        <div class="flex-1">
-          <NInput v-model:value="description" placeholder="" />
+        <span class="flex-shrink-0 w-[60px]">{{ $t('setting.name') }}</span>
+        <div class="w-[200px]">
+          <NInput v-model:value="name" placeholder="" />
         </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })">
+        <NButton size="small" text type="primary" @click="updateUserInfo({ name })">
           {{ $t('common.save') }}
         </NButton>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.resetUserInfo') }}</span>
-        <NButton text type="primary" @click="handleReset">
-          {{ $t('common.reset') }}
+        <span class="flex-shrink-0 w-[60px]">{{ $t('setting.description') }}</span>
+        <div class="flex-1">
+          <NInput v-model:value="description" placeholder="" />
+        </div>
+        <NButton size="small" text type="primary" @click="updateUserInfo({ description })">
+          {{ $t('common.save') }}
         </NButton>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.theme') }}</span>
-        <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[60px]">{{ $t('setting.theme') }}</span>
+        <div class="flex flex-wrap items-center gap-4">
           <template v-for="item of themeOptions" :key="item.key">
-            <a
-              class="flex items-center justify-center h-8 px-4 border rounded-md cursor-pointer dark:border-neutral-700"
-              :class="item.key === theme && ['bg-[#4ca85e]', 'border-[#4ca85e]', 'text-white']"
+            <NButton
+              size="small"
+              :type="item.key === theme ? 'primary' : undefined"
               @click="appStore.setTheme(item.key)"
             >
-              <span class="text-xl">
+              <template #icon>
                 <SvgIcon :icon="item.icon" />
-              </span>
-            </a>
+              </template>
+            </NButton>
           </template>
         </div>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.language') }}</span>
-        <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[60px]">{{ $t('setting.language') }}</span>
+        <div class="flex flex-wrap items-center gap-4">
           <template v-for="item of languageOptions" :key="item.key">
-            <a
-              class="flex items-center justify-center h-8 px-4 border rounded-md cursor-pointer dark:border-neutral-700"
-              :class="item.key === language && ['bg-[#4ca85e]', 'border-[#4ca85e]', 'text-white']"
+            <NButton
+              size="small"
+              :type="item.key === language ? 'primary' : undefined"
               @click="appStore.setLanguage(item.key)"
             >
-              <span class="text-sm">
-                {{ item.label }}
-              </span>
-            </a>
+              {{ item.label }}
+            </NButton>
           </template>
         </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[60px]">{{ $t('setting.resetUserInfo') }}</span>
+        <NButton size="small" text type="primary" @click="handleReset">
+          {{ $t('common.reset') }}
+        </NButton>
       </div>
     </div>
   </div>

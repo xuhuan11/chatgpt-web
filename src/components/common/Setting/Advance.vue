@@ -22,7 +22,7 @@ function updateChatgptParams(options: Partial<UserInfo>) {
 <template>
   <div class="p-4 space-y-5 min-h-[200px]">
     <div class="space-y-6">
-      <div class="flex items-center space-x-4">
+      <div class="flex flex-wrap items-center gap-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatgpt_memory_title') }}</span>
         <div class="w-[300px]">
           <NSlider
@@ -37,13 +37,13 @@ function updateChatgptParams(options: Partial<UserInfo>) {
           />
         </div>
       </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex flex-wrap items-center gap-4">
         <span class="flex-shrink-0 w-[100px]" />
         <div class="w-[300px]  text-gray-500">
           {{ $t('setting.chatgpt_memory_memo') }}
         </div>
       </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex flex-wrap items-center gap-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatgpt_top_p_title') }}</span>
         <div class="w-[400px] text-gray-500">
           <NRadioGroup
@@ -73,7 +73,7 @@ function updateChatgptParams(options: Partial<UserInfo>) {
           </NRadioGroup>
         </div>
       </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex flex-wrap items-center gap-4">
         <span class="flex-shrink-0 w-[100px]" />
         <div class="w-[400px] text-gray-500">
           <span v-if="0 === chatgpt_top_p">
