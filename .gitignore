@@ -12,6 +12,8 @@ lerna-debug.log*
 service/venv
 service/message_store.json
 
+docker-compose/nginx/html
+
 node_modules
 .DS_Store
 dist

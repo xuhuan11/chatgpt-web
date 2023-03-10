@@ -43,6 +43,19 @@ const sendingRecord = ref<boolean>(false)
 const recording = ref<boolean>(false)
 const audioMode = ref<boolean>(false)
 
+function isServerError(responseText: string) {
+  if (responseText.startsWith('ChatGptWebServerError:'))
+    return true
+
+  return false
+}
+function getServerErrorType(responseText: string) {
+  if (responseText.startsWith('ChatGptWebServerError:'))
+    return responseText.split(':')[1]
+
+  return ''
+}
+
 function handleSubmit() {
   onConversation()
 }
@@ -278,6 +291,22 @@ async function onConversation() {
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
         const { responseText } = xhr
+        const isError = isServerError(responseText)
+        if (isError) {
+          updateChat(
+            +uuid,
+            dataSources.value.length - 1,
+            {
+              dateTime: new Date().toLocaleString(),
+              text: t(`server.${getServerErrorType(responseText)}`),
+              inversion: false,
+              error: true,
+              loading: false,
+              requestOptions: { prompt: message, ...options },
+            },
+          )
+        }
+
         // Always process the final line
         const lastIndex = responseText.lastIndexOf('\n')
         let chunk = responseText
@@ -398,6 +427,23 @@ async function onRegenerate(index: number) {
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
         const { responseText } = xhr
+
+        const isError = isServerError(responseText)
+        if (isError) {
+          updateChat(
+            +uuid,
+            dataSources.value.length - 1,
+            {
+              dateTime: new Date().toLocaleString(),
+              text: t(`server.${getServerErrorType(responseText)}`),
+              inversion: false,
+              error: true,
+              loading: false,
+              requestOptions: { prompt: message, ...options },
+            },
+          )
+        }
+
         // Always process the final line
         const lastIndex = responseText.lastIndexOf('\n')
         let chunk = responseText

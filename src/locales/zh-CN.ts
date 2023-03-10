@@ -6,7 +6,7 @@ export default {
     yes: '是',
     no: '否',
     noData: '暂无数据',
-    wrong: '好像出错了，请稍后再试。',
+    wrong: '出错了，请稍后再试',
     success: '操作成功',
     failed: '操作失败',
     about_head: '本项目原作者为Chanzhaoyu, 经WenJing分叉和修改，基于 MIT 协议开源。',
@@ -14,8 +14,8 @@ export default {
   },
   chat: {
     newChat: '创建新对话',
-    placeholder: '来说点什么...（Shift + Enter = 换行）',
-    placeholderMobile: '来说点什么...',
+    placeholder: '想问点什么...（Shift + Enter = 换行）',
+    placeholderMobile: '想问点什么...',
     copy: '复制',
     copied: '复制成功',
     copyCode: '复制代码',
@@ -59,6 +59,11 @@ export default {
     api: 'API',
     timeout: '超时',
     socks: 'Socks',
+  },
+  server: {
+    PromptIsEmpty: '你好！今天我能为您提供什么帮助？',
+    NotComplyPolicy: '对不起，您发送的内容不符合我们的使用政策。请注意，我们的平台禁止发布涉及骚扰、歧视、暴力、色情等违反法律法规和社会道德的内容。如有疑问，请联系开发者获取更多帮助。谢谢。',
+    SomethingWrong: '出错了，请稍后再试',
   },
 
 }

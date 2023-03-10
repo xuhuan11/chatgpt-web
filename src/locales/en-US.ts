@@ -60,5 +60,10 @@ export default {
     timeout: 'Timeout',
     socks: 'Socks',
   },
+  server: {
+    PromptIsEmpty: 'Hello! How can I assist you today?',
+    NotComplyPolicy: 'Sorry, the content you have sent does not comply with our usage policy. Please note that our platform prohibits the publication of content that involves harassment, discrimination, violence, pornography, and other violations of laws, regulations, and social ethics. If you have any questions, please contact the developer for further assistance. Thank you.',
+    SomethingWrong: 'Oops, something went wrong. Please try again later.',
+  },
 
 }
