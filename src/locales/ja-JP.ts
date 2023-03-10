@@ -51,10 +51,12 @@ export default {
     chatgpt_memory_choice_3: '記憶力が強い(すべて)',
 
     chatgpt_top_p_title: '性格',
-    chatgpt_top_p_0_memo: '正確な分析に傾くことで、ChatGptの無意味な発言の可能性を減らします。',
-    chatgpt_top_p_1_memo: 'ブレインストーミングモードで、より豊富な情報を提供する傾向があります。',
+    chatgpt_top_p_1_memo: '正確な分析に傾くことで、ChatGptの無意味な発言の可能性を減らします。',
+    chatgpt_top_p_2_memo: '回答の正確さと創造性のバランスを兼ね備える。',
+    chatgpt_top_p_3_memo: 'ブレインストーミングモードで、より豊富な情報を提供する傾向があります。',
     chatgpt_top_p_choice_1: '正確性重視',
-    chatgpt_top_p_choice_2: 'アイデア出し重視',
+    chatgpt_top_p_choice_2: '一石二鳥',
+    chatgpt_top_p_choice_3: 'アイデア出し重視',
 
     api: 'API',
     timeout: 'タイムアウト',

@@ -58,8 +58,6 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
             parent_message_id = None
             messages = [base, chat]
 
-        messages = [messages[0]] + messages[-memory_count:]
-
         # 消息不能超过4096个token
         # todo 压缩过去消息
         messages = discard_overlimit_messages(messages)

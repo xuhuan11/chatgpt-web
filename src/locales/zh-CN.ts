@@ -51,10 +51,12 @@ export default {
     chatgpt_memory_choice_3: '最强记忆(全部)',
 
     chatgpt_top_p_title: '性格',
-    chatgpt_top_p_0_memo: '倾向于精确的分析，减少ChatGpt胡说八道的可能性',
-    chatgpt_top_p_1_memo: '头脑风暴状态，倾向于提供更丰富的信息',
-    chatgpt_top_p_choice_1: '准确无误',
-    chatgpt_top_p_choice_2: '发散思维',
+    chatgpt_top_p_1_memo: '倾向于提供精确的分析，减少ChatGpt胡说八道的可能性',
+    chatgpt_top_p_2_memo: '兼顾回答的准确性和想象力',
+    chatgpt_top_p_3_memo: '倾向于提供更丰富的信息',
+    chatgpt_top_p_choice_1: '准确可信',
+    chatgpt_top_p_choice_2: '平衡性格',
+    chatgpt_top_p_choice_3: '发散思维',
 
     api: 'API',
     timeout: '超时',

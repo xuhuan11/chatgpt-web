@@ -56,7 +56,13 @@ async def chat_process(request_data: dict):
 	else:
 		memory_count = 999
 
-	top_p = 0 if 0 == request_data["top_p"] else 1
+	if 1 == request_data["top_p"]:
+		top_p = 0.2
+	elif 50 == request_data["top_p"]:
+		top_p = 0.5
+	else:
+		top_p = 1
+
 	answer_text = process(prompt, options, memory_count, top_p, MASSAGE_STORE, model=API_MODEL)
 	return StreamingResponse(content=answer_text, headers=stream_response_headers, media_type="text/event-stream")
 

@@ -51,10 +51,12 @@ export default {
     chatgpt_memory_choice_3: 'Strong Memory (all logs)',
 
     chatgpt_top_p_title: 'The personality of ChatGpt',
-    chatgpt_top_p_0_memo: 'Tends to precise analysis, reducing the possibility of ChatGPT\'s nonsense.',
-    chatgpt_top_p_1_memo: 'Brainstorming mode, tends to provide richer information.',
+    chatgpt_top_p_1_memo: 'Tends to precise analysis, reducing the possibility of ChatGPT\'s nonsense.',
+    chatgpt_top_p_2_memo: 'Balancing accuracy and creativity in responses.',
+    chatgpt_top_p_3_memo: 'Brainstorming mode, tends to provide richer information.',
     chatgpt_top_p_choice_1: 'Accurate',
-    chatgpt_top_p_choice_2: 'Exploratory',
+    chatgpt_top_p_choice_2: 'Balanced personality',
+    chatgpt_top_p_choice_3: 'Exploratory',
 
     api: 'API',
     timeout: 'Timeout',

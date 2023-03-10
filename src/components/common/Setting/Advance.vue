@@ -59,10 +59,16 @@ function updateChatgptParams(options: Partial<UserInfo>) {
               {{ $t('setting.chatgpt_top_p_choice_1') }}
             </NRadioButton>
             <NRadioButton
+              :key="50"
+              :value="50"
+            >
+              {{ $t('setting.chatgpt_top_p_choice_2') }}
+            </NRadioButton>
+            <NRadioButton
               :key="100"
               :value="100"
             >
-              {{ $t('setting.chatgpt_top_p_choice_2') }}
+              {{ $t('setting.chatgpt_top_p_choice_3') }}
             </NRadioButton>
           </NRadioGroup>
         </div>
@@ -71,10 +77,13 @@ function updateChatgptParams(options: Partial<UserInfo>) {
         <span class="flex-shrink-0 w-[100px]" />
         <div class="w-[400px] text-gray-500">
           <span v-if="0 === chatgpt_top_p">
-            {{ $t('setting.chatgpt_top_p_0_memo') }}
+            {{ $t('setting.chatgpt_top_p_1_memo') }}
+          </span>
+          <span v-else-if="50 === chatgpt_top_p">
+            {{ $t('setting.chatgpt_top_p_2_memo') }}
           </span>
           <span v-else>
-            {{ $t('setting.chatgpt_top_p_1_memo') }}
+            {{ $t('setting.chatgpt_top_p_3_memo') }}
           </span>
         </div>
       </div>
