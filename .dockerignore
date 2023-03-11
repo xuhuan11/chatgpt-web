@@ -1,6 +1,4 @@
 node_modules
 Dockerfile
-.git
-.husky
-.github
-.vscode
+.*
+*/.*

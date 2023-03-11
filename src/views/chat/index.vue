@@ -42,6 +42,7 @@ const recProtectionPeriod = ref<boolean>(false)
 const sendingRecord = ref<boolean>(false)
 const recording = ref<boolean>(false)
 const audioMode = ref<boolean>(false)
+const actionVisible = ref<boolean>(true)
 
 function isServerError(responseText: string) {
   if (responseText.startsWith('ChatGptWebServerError:'))
@@ -103,6 +104,7 @@ function _recStart() { // 打开了录音后才能进行start、stop调用
       conversationOptions: null,
       requestOptions: { prompt: '', options: null },
     },
+    t('chat.newChat'),
   )
   scrollToBottom()
 }
@@ -252,6 +254,7 @@ async function onConversation() {
         conversationOptions: null,
         requestOptions: { prompt: message, options: null },
       },
+      t('chat.newChat'),
     )
   }
   scrollToBottom()
@@ -278,6 +281,7 @@ async function onConversation() {
       conversationOptions: null,
       requestOptions: { prompt: message, options: { ...options } },
     },
+    t('chat.newChat'),
   )
   scrollToBottom()
 
@@ -305,6 +309,8 @@ async function onConversation() {
               requestOptions: { prompt: message, ...options },
             },
           )
+          scrollToBottom()
+          return
         }
 
         // Always process the final line
@@ -540,7 +546,7 @@ function handleClear() {
     positiveText: t('common.yes'),
     negativeText: t('common.no'),
     onPositiveClick: () => {
-      chatStore.clearChatByUuid(+uuid)
+      chatStore.clearChatByUuid(+uuid, t('chat.newChat'))
     },
   })
 }
@@ -574,6 +580,15 @@ function handleRec() {
     recStart()
 }
 
+function onInputFocus() {
+  if (isMobile.value)
+    actionVisible.value = false
+}
+function onInputBlur() {
+  if (isMobile.value)
+    actionVisible.value = true
+}
+
 const placeholder = computed(() => {
   if (isMobile.value)
     return t('chat.placeholderMobile')
@@ -597,7 +612,7 @@ const wrapClass = computed(() => {
 const footerClass = computed(() => {
   let classes = ['p-4']
   if (isMobile.value)
-    classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pr-4', 'overflow-hidden']
+    classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'overflow-hidden']
   return classes
 })
 
@@ -656,18 +671,20 @@ onUnmounted(() => {
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="flex items-center justify-between space-x-2">
-          <HoverButton @click="handleClear">
-            <span class="text-xl text-[#4f555e] dark:text-white">
-              <SvgIcon icon="ri:delete-bin-line" />
-            </span>
-          </HoverButton>
-          <HoverButton
-            @click="audioMode = !audioMode"
-          >
-            <span class="text-xl text-[#4f555e] dark:text-white">
-              <SvgIcon icon="ph:microphone-bold" />
-            </span>
-          </HoverButton>
+          <div v-if="actionVisible" class="flex items-center space-x-2">
+            <HoverButton @click="handleClear">
+              <span class="text-xl text-[#4f555e] dark:text-white">
+                <SvgIcon icon="ri:delete-bin-line" />
+              </span>
+            </HoverButton>
+            <HoverButton
+              @click="audioMode = !audioMode"
+            >
+              <span class="text-xl text-[#4f555e] dark:text-white">
+                <SvgIcon icon="ph:microphone-bold" />
+              </span>
+            </HoverButton>
+          </div>
           <NInput
             v-if="!audioMode"
             v-model:value="prompt"
@@ -676,6 +693,8 @@ onUnmounted(() => {
             :autosize="{ minRows: 1.4, maxRows: 10 }"
             :placeholder="placeholder"
             @keypress="handleEnter"
+            @focus="onInputFocus"
+            @blur="onInputBlur"
           />
           <NButton
             v-if="audioMode"

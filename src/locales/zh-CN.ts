@@ -13,7 +13,7 @@ export default {
     about_body: '如果你觉得此项目对你有帮助，请在Github给我点个Star；如果你希望捐助，请捐助原作者，谢谢你！',
   },
   chat: {
-    newChat: '创建新对话',
+    newChat: '新的对话',
     placeholder: '想问点什么...（Shift + Enter = 换行）',
     placeholderMobile: '想问点什么...',
     copy: '复制',
