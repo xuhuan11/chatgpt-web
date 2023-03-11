@@ -31,11 +31,11 @@
     "naive-ui": "^2.34.3",
     "pinia": "^2.0.32",
     "recorder-core": "^1.2.23020100",
+    "vite-plugin-pwa": "^0.14.4",
     "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.1.6",
-		"vite-plugin-pwa": "^0.14.4"
-	},
+    "vue-router": "^4.1.6"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.35.3",
     "@commitlint/cli": "^17.4.4",
@@ -59,7 +59,7 @@
     "tailwindcss": "^3.2.7",
     "typescript": "~4.9.5",
     "vite": "^4.1.4",
-		"vite-plugin-pwa": "^0.14.4",
+    "vite-plugin-pwa": "^0.14.4",
     "vue-tsc": "^1.2.0"
   },
   "lint-staged": {

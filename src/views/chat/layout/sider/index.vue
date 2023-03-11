@@ -14,8 +14,8 @@ const { isMobile } = useBasicLayout()
 
 const collapsed = computed(() => appStore.siderCollapsed)
 
-function handleAdd() {
-  chatStore.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
+function handleAdd(newChatText: string) {
+  chatStore.addHistory({ title: newChatText, uuid: Date.now(), isEdit: false })
   appStore.setFocusTextarea()
 }
 
@@ -69,7 +69,7 @@ watch(
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
         <div class="p-4">
-          <NButton dashed block @click="handleAdd">
+          <NButton dashed block @click="handleAdd($t('chat.newChat'))">
             {{ $t("chat.newChat") }}
           </NButton>
         </div>
