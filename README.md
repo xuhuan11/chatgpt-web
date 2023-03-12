@@ -2,11 +2,16 @@
 
 [在线演示](https://simplegpt.io)
 
-
+### 使用界面
 ![cover3](./docs/c3.png)
 ![cover](./docs/c1.png)
 ![cover2](./docs/c2.png)
+
+### 性格微调功能
 ![cover4](./docs/c4.png)
+
+### 文本审查功能(使用OpenAI官方接口)
+![cover5](./docs/c5.png)
 
 - [ChatGPT Web](#chatgpt-web)
 	- [介绍](#介绍)
