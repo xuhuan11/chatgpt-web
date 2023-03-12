@@ -6,6 +6,7 @@
 ![cover3](./docs/c3.png)
 ![cover](./docs/c1.png)
 ![cover2](./docs/c2.png)
+![cover4](./docs/c4.png)
 
 - [ChatGPT Web](#chatgpt-web)
 	- [介绍](#介绍)
