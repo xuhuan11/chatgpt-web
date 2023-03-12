@@ -1,10 +1,7 @@
-# ChatGPT Web [在线演示](https://simplegpt.io)
+# ChatGPT Web
 
-<div style="font-size: 1.5rem;">
-  <a href="./README.md">中文</a> |
-  <a href="./README.en.md">English</a>
-</div>
-</br>
+[在线演示](https://simplegpt.io)
+
 
 ![cover3](./docs/c3.png)
 ![cover](./docs/c1.png)
@@ -31,9 +28,8 @@
 
 ## 介绍
 
-这是一个可以自己在本地部署的`ChatGpt Web`
-页面，Fork和修改于[Chanzhaoyu/chatgpt-web](https://github.com/Chanzhaoyu/chatgpt-web/)，使用`OpenAI`
-的官方API接入`gpt-3.5-turbo`模型来实现接近`ChatGPT Plus`的对话效果。
+这是一个可以自己在本地部署的`ChatGpt`网页，使用`OpenAI`的官方API接入`gpt-3.5-turbo`模型来实现接近`ChatGPT Plus`的对话效果。
+源代码Fork和修改于[Chanzhaoyu/chatgpt-web](https://github.com/Chanzhaoyu/chatgpt-web/)
 
 与OpenAI官方提供的付费版本`ChatGPT Plus`对比，`ChatGPT Web`有以下优势：
 
@@ -48,17 +44,20 @@
 
 和[Chanzhaoyu的原版](https://github.com/Chanzhaoyu/chatgpt-web/)的主要区别：
 
-1. 可以识别语音消息：通过接入`whisper-1`API实现
-2. 可以微调参数：通过设置可以节省token消耗量、让`ChatGpt`更准确地回答问题
-3. `ChatGpt Web`现在可以“记住”更多的上下文：服务器端将聊天记录被持久化保存
-4. 去掉了`ChatGPTUnofficialProxyAPI`和反向代理功能：考虑到使用者并非都有精力折腾，因此只保留了官方API的方式。
+1. 专注于易用、易部署、不操心。对小白用户友好，部署和使用的门槛比原版更低
+
+	 1.	没有反向代理功能
+   2. 没有导入和管理Prompt模板的功能，使用者没有“这个链接干什么用的”、“什么是json文件”、“为什么要我自己审核json文件的安全性，怎么审核？”此类烦恼
+   3. 可以随机生成头像，不需要自己去找头像链接
+   4. 附带打包好的前端资源，自己部署不再需要安装开发环境
+
+2. 可以识别语音消息：通过接入`whisper-1`API实现。懒得打字的时候很好用
+3. 可以微调参数：通过设置可以调整`ChatGpt`的性格
+4. 可以“记住”更多的上下文：聊天记录保存在服务器端，不会因为网页端清理缓存而丢失上下文，影响回答质量
 
 其它更新：
-
-1. 可以随机生成头像
-2. 增加日语界面
-3. 优化了一点移动端体验
-4. 后端使用python重写（因为我不会nodejs）
+1. 增加日语界面
+2. 优化了移动端体验
 
 ## 快速部署
 
@@ -188,22 +187,21 @@ pnpm dev
 
 ## 使用最新版本docker镜像启动
 
-- 如果你不想自己打包镜像，可以直接使用我已经打包好的镜像
+- 如果你只是想自己使用docker部署，可以直接使用我已经打包好的镜像和前端资源
 
-- 首先你仍然需要自己先将前端资源打包，让我们复习一下流程
-	1. 安装nodejs，版本要求`16`以上
-	2. `npm install pnpm -g`
-	3. `pnpm bootstrap`
-	4. `pnpm run build`
+- 首先将前端资源的压缩包解压
 
-- 然后将打包好的文件夹`dist`文件夹复制到`/docker-compose/nginx`目录下，并改名为`html`
-	```shell
-	cp dist/ docker-compose/nginx/html -r
+	前端资源的压缩包在`/docker-compose/nginx/html.zip`，使用`unzip html.zip`将其解压缩。你应该可以看到`/docker-compose/nginx/html`下面有`index.html`和其他前端资源。
+
+- 然后修改`docker-compose/nginx/nginx.conf`文件，填写你的服务器ip，假如你的服务器ip是`122.122.122.122`，那么
+
+	```
+	proxy_pass http://122.122.122.122:3002/;
 	```
 
-- 然后修改`docker-compose/docker-compose.yml`文件。
+- 最后修改`docker-compose/docker-compose.yml`文件。
 
-	除了填写`OPENAI_API_KEY`之外，还要根据自己的系统环境修改`image`的标签
+	除了填写你自己的`OPENAI_API_KEY`之外，还要根据自己的系统环境修改`image`的标签，如果你部署用的是x86架构的机器，就填写`wenjing95/chatgpt-web-backend:x86_64`，如果你用的是arm架构的机器，就填写`wenjing95/chatgpt-web-backend:aarch64`。
 
 	```
 	version: '3'
@@ -227,16 +225,14 @@ pnpm dev
         # PORT，可选，默认值为 3002
         PORT: 3002
     nginx:
-      build: nginx
-      # 根据自己的系统选择x86_64还是aarch64
-      image: wenjing95/chatgpt-web-frontend:x86_64
-      # image: wenjing95/chatgpt-web-frontend:aarch64
+      image: nginx:alpine
       ports:
         - '80:80'
       expose:
         - '80'
       volumes:
         - ./nginx/html/:/etc/nginx/html/
+        - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       links:
         - app
 	```
