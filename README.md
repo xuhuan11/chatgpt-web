@@ -129,10 +129,6 @@ pnpm dev
 
 3. 修改`/docker-compose/nginx/nginx.conf`文件，填写你的服务器IP
 
-4. 在`/docker-compose/nginx`目录下运行以下命令
-	```shell
-	docker build -t chatgpt-web-frontend .
-	```
 
 ### 后端服务打包
 
@@ -164,14 +160,14 @@ pnpm dev
         # PORT，可选，默认值为 3002
         PORT: 3002
     nginx:
-      build: nginx
-      image: chatgpt-web-frontend # 这里填你打包的后端服务的镜像名字
+      image: nginx:alpine
       ports:
         - '80:80'
       expose:
         - '80'
       volumes:
         - ./nginx/html/:/etc/nginx/html/
+        - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       links:
         - app
 	```

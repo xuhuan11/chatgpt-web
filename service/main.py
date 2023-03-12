@@ -9,7 +9,6 @@ from fastapi.responses import JSONResponse, StreamingResponse
 import uvicorn
 from message_store import MessageStore
 from whisper_wapper import process_audio
-from tools.yaml_parser import yaml_to_dict
 import argparse
 
 log_folder = os.path.join(abspath(dirname(__file__)), "log")
