@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
@@ -9,6 +9,9 @@ const chatStore = useChatStore()
 
 const collapsed = computed(() => appStore.siderCollapsed)
 const currentChatHistory = computed(() => chatStore.getChatHistoryByCurrentActive)
+
+const Setting = defineAsyncComponent(() => import('@/components/common/Setting/index.vue'))
+const showSetting = ref(false)
 
 function handleUpdateCollapsed() {
   appStore.setSiderCollapsed(!collapsed.value)
@@ -54,10 +57,12 @@ const { isMobile } = useBasicLayout()
       >
         <SvgIcon class="text-2xl" icon="ri:arrow-down-s-line" />
       </button>
-      <button
-        v-if="isMobile"
-        class="flex items-center justify-center w-11 h-11"
-      />
+      <HoverButton class="flex items-center justify-center w-11 h-11" :tooltip="$t('setting.setting')" @click="showSetting = true">
+        <span class="text-xl text-[#4f555e] dark:text-white">
+          <SvgIcon icon="ri:settings-4-line" />
+        </span>
+      </HoverButton>
+      <Setting v-if="isMobile" v-model:visible="showSetting" />
     </div>
   </header>
 </template>

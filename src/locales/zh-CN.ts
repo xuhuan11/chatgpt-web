@@ -34,9 +34,9 @@ export default {
   setting: {
     setting: '设置',
     randomAvatar: '随机生成一个头像',
-    general: '总览',
+    general: '一般',
     advance: '高级',
-    config: '配置',
+    about: '关于',
     avatarLink: '头像链接',
     name: '名称',
     description: '描述',

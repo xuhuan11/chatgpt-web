@@ -36,7 +36,7 @@ export default {
     randomAvatar: 'アバターをランダムに生成する',
     general: '一般',
     advance: '高度な設定',
-    config: '設定',
+    about: 'このアプリについて',
     avatarLink: 'アバターリンク',
     name: '名前',
     description: '説明',
