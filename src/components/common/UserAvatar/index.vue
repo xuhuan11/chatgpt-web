@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { NAvatar } from 'naive-ui'
 import { useUserStore } from '@/store'
-import defaultAvatar from '@/assets/avatar.jpg'
 import { isString } from '@/utils/is'
 import { SvgIcon } from '@/components/common'
 
@@ -19,11 +18,10 @@ const userInfo = computed(() => userStore.userInfo)
           size="large"
           round
           :src="userInfo.avatar"
-          :fallback-src="defaultAvatar"
         />
       </template>
       <template v-else>
-        <NAvatar size="large" round :src="defaultAvatar" />
+        <NAvatar size="large" round />
       </template>
     </div>
     <div class="ml-2">
@@ -35,13 +33,6 @@ const userInfo = computed(() => userStore.userInfo)
           v-if="isString(userInfo.description) && userInfo.description !== ''"
           v-text="userInfo.description"
         />
-        <span
-          v-else
-        >
-          <p>Forked and modified</p>
-          <p>from Chanzhaoyu</p>
-          <p>by WenJing</p>
-        </span>
 
         <span>
           <a
