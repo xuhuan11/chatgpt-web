@@ -672,11 +672,11 @@ onUnmounted(() => {
       <div class="w-full max-w-screen-xl m-auto">
         <div class="flex items-center justify-between space-x-2">
           <div v-if="actionVisible" class="flex items-center space-x-2">
-            <HoverButton @click="handleClear">
-              <span class="text-xl text-[#4f555e] dark:text-white">
-                <SvgIcon icon="ri:delete-bin-line" />
-              </span>
-            </HoverButton>
+            <!--            <HoverButton @click="handleClear"> -->
+            <!--              <span class="text-xl text-[#4f555e] dark:text-white"> -->
+            <!--                <SvgIcon icon="ri:delete-bin-line" /> -->
+            <!--              </span> -->
+            <!--            </HoverButton> -->
             <HoverButton
               @click="audioMode = !audioMode"
             >
