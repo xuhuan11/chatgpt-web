@@ -678,10 +678,19 @@ onUnmounted(() => {
             <!--              </span> -->
             <!--            </HoverButton> -->
             <HoverButton
+              v-if="!audioMode"
               @click="audioMode = !audioMode"
             >
               <span class="text-xl text-[#4f555e] dark:text-white">
                 <SvgIcon icon="ph:microphone-bold" />
+              </span>
+            </HoverButton>
+            <HoverButton
+              v-else
+              @click="audioMode = !audioMode"
+            >
+              <span class="text-xl text-[#4f555e] dark:text-white">
+                <SvgIcon icon="material-symbols:keyboard" />
               </span>
             </HoverButton>
           </div>
@@ -706,7 +715,11 @@ onUnmounted(() => {
             <span v-if="recording">{{ $t('chat.clickToSend') }}</span>
             <span v-if="!recording">{{ $t('chat.clickToTalk') }}</span>
           </NButton>
-          <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+          <NButton
+            v-if="!audioMode"
+            type="primary"
+            :disabled="buttonDisabled" @click="handleSubmit"
+          >
             <template #icon>
               <span class="dark:text-black">
                 <SvgIcon icon="ri:send-plane-fill" />
