@@ -97,7 +97,7 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
             ))
             result_messages.append(message)
 
-        yield "\n".join(result_messages)
+            yield "\n".join(result_messages)
     except:
         err = traceback.format_exc()
         logger.error(err)
