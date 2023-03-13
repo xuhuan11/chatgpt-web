@@ -9,6 +9,7 @@ from loguru import logger
 from backoff import on_exception, expo
 from tools.openai_token_control import num_tokens_from_string, discard_overlimit_messages
 import concurrent.futures
+from errors import Errors
 
 base = {"role": "system", "content": "You are a helpful assistant."}
 
@@ -27,7 +28,7 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
     # 不能是空消息
     if not prompt:
         logger.error("Prompt is empty.")
-        yield "ChatGptWebServerError:PromptIsEmpty"
+        yield Errors.PROMPT_IS_EMPTY.value
         return
 
     # 内容审查
@@ -41,7 +42,7 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
             prompt
         )
         logger.warning(warning_text)
-        yield "ChatGptWebServerError:NotComplyPolicy"
+        yield Errors.NOT_COMPLY_POLICY.value
         return
 
     try:
@@ -101,7 +102,7 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
     except:
         err = traceback.format_exc()
         logger.error(err)
-        yield "ChatGptWebServerError:SomethingWrong"
+        yield Errors.SOMETHING_WRONG.value
         return
 
     try:
