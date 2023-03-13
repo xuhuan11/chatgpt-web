@@ -14,8 +14,8 @@ export default {
   },
   chat: {
     newChat: '新的对话',
-    placeholder: '想问点什么...（Shift + Enter = 换行）',
-    placeholderMobile: '想问点什么...',
+    placeholder: '有问题尽管问我...(Shift + Enter = 换行)',
+    placeholderMobile: '有问题尽管问我...',
     copy: '复制',
     copied: '复制成功',
     copyCode: '复制代码',
