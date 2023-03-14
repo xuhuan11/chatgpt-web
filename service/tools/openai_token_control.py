@@ -11,18 +11,17 @@ def discard_overlimit_messages(messages: list):
     :return:
     """
 
-    token_count = num_tokens_from_messages(messages)
-    if token_count <= GPT_35_MAX_TOKEN:
-        return messages
+    while True:
+        token_count = num_tokens_from_messages(messages)
 
-    token_count = 0
-    for i in range(len(messages) - 1, -1, -1):
-        chat = messages[i]
-        token_count += num_tokens_from_string(chat["content"], "gpt-3.5-turbo-0301")
-        if token_count > GPT_35_MAX_TOKEN:
-            return messages[i + 1:]
-
-    return messages
+        if token_count <= GPT_35_MAX_TOKEN:
+            return messages
+        else:
+            # 去掉过去的一半消息，给回答留下足够空间
+            # 通常来说问题比较短，回复比较长，如果只去掉最远的1、2条消息，可能会导致问题占了大部分token，比方说4090个
+            # 在最大token只能有4096个的情况下，回复只能有6个token，这样就会导致回复被截断
+            messages = messages[int(len(messages) / 2):]
+            continue
 
 
 def num_tokens_from_string(string: str, encoding_name: str) -> int:
