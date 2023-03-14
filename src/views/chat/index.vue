@@ -443,7 +443,8 @@ async function onRegenerate(index: number) {
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
-        const { responseText } = xhr
+        let { responseText } = xhr
+        responseText = removeDataPrefix(responseText)
 
         const isError = isServerError(responseText)
         if (isError) {
@@ -461,11 +462,13 @@ async function onRegenerate(index: number) {
           )
         }
 
-        // Always process the final line
-        const lastIndex = responseText.lastIndexOf('\n')
+        // SSE response format "data: xxx"
+        const lastIndex = responseText.lastIndexOf('data: ')
         let chunk = responseText
         if (lastIndex !== -1)
           chunk = responseText.substring(lastIndex)
+
+        chunk = removeDataPrefix(chunk)
         try {
           const data = JSON.parse(chunk)
           updateChat(
