@@ -63,6 +63,9 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
         # todo 压缩过去消息
         messages = discard_overlimit_messages(messages)
 
+        # 记忆
+        messages = messages[-memory_count:]
+
         params = dict(
             stream=True, messages=messages, model=model, top_p=top_p
         )
@@ -99,6 +102,7 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
             result_messages.append(message)
 
             yield "\n".join(result_messages)
+            # yield "\n".join([message])
     except:
         err = traceback.format_exc()
         logger.error(err)
