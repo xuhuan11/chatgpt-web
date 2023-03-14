@@ -217,6 +217,13 @@ async function recStop() {
   })
 }
 
+function removeDataPrefix(str: string) {
+  if (str && str.startsWith('data: '))
+    return str.slice(6)
+
+  return str
+}
+
 async function onConversation() {
   const message = prompt.value
 
@@ -294,7 +301,9 @@ async function onConversation() {
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
-        const { responseText } = xhr
+        let { responseText } = xhr
+        responseText = removeDataPrefix(responseText)
+
         const isError = isServerError(responseText)
         if (isError) {
           updateChat(
@@ -313,11 +322,13 @@ async function onConversation() {
           return
         }
 
-        // Always process the final line
-        const lastIndex = responseText.lastIndexOf('\n')
+        // SSE response format "data: xxx"
+        const lastIndex = responseText.lastIndexOf('data: ')
         let chunk = responseText
         if (lastIndex !== -1)
           chunk = responseText.substring(lastIndex)
+
+        chunk = removeDataPrefix(chunk)
         try {
           const data = JSON.parse(chunk)
           updateChat(
@@ -536,20 +547,20 @@ function handleDelete(index: number) {
   })
 }
 
-function handleClear() {
-  if (loading.value)
-    return
-
-  dialog.warning({
-    title: t('chat.clearChat'),
-    content: t('chat.clearChatConfirm'),
-    positiveText: t('common.yes'),
-    negativeText: t('common.no'),
-    onPositiveClick: () => {
-      chatStore.clearChatByUuid(+uuid, t('chat.newChat'))
-    },
-  })
-}
+// function handleClear() {
+//   if (loading.value)
+//     return
+//
+//   dialog.warning({
+//     title: t('chat.clearChat'),
+//     content: t('chat.clearChatConfirm'),
+//     positiveText: t('common.yes'),
+//     negativeText: t('common.no'),
+//     onPositiveClick: () => {
+//       chatStore.clearChatByUuid(+uuid, t('chat.newChat'))
+//     },
+//   })
+// }
 
 function handleEnter(event: KeyboardEvent) {
   if (!isMobile.value) {

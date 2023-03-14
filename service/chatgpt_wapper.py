@@ -7,7 +7,7 @@ import json
 import asyncio
 from loguru import logger
 from backoff import on_exception, expo
-from tools.openai_token_control import num_tokens_from_string, discard_overlimit_messages
+from tools.openai_token_control import discard_overlimit_messages
 import concurrent.futures
 from errors import Errors
 
@@ -74,11 +74,14 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
 
         res = await _chat_completions_create_async(params)
 
-        result_messages = []
         text = ""
         role = ""
+        prev_message_dict = {}
         for openai_object in res:
             openai_object_dict = openai_object.to_dict_recursive()
+
+            prev_message_dict = openai_object_dict
+
             if not role:
                 role = openai_object_dict["choices"][0]["delta"].get("role", "")
 
@@ -90,19 +93,17 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
                 id=openai_object_dict["id"],
                 parentMessageId=parent_message_id,
                 text=text,
-                delta=text_delta,
-                detail=dict(
-                    id=openai_object_dict["id"],
-                    object=openai_object_dict["object"],
-                    created=openai_object_dict["created"],
-                    model=openai_object_dict["model"],
-                    choices=openai_object_dict["choices"]
-                )
+                # delta=text_delta,
+                # detail=dict(
+                #     id=openai_object_dict["id"],
+                #     object=openai_object_dict["object"],
+                #     # created=openai_object_dict["created"],
+                #     # model=openai_object_dict["model"],
+                #     # choices=openai_object_dict["choices"]
+                # )
             ))
-            result_messages.append(message)
+            yield message
 
-            yield "\n".join(result_messages)
-            # yield "\n".join([message])
     except:
         err = traceback.format_exc()
         logger.error(err)
@@ -114,8 +115,7 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
         chat = {"role": role, "content": text}
         messages.append(chat)
 
-        openai_object_dict = json.loads(result_messages[-1])
-        parent_message_id = openai_object_dict["id"]
+        parent_message_id = prev_message_dict["id"]
         message_store.set(parent_message_id, messages)
     except:
         err = traceback.format_exc()
