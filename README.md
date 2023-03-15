@@ -1,7 +1,5 @@
 # ChatGPT Web
 
-[在线演示](https://simplegpt.io)
-
 ### 使用界面
 ![cover3](./docs/c3.png)
 ![cover](./docs/c1.png)
