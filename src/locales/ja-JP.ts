@@ -66,5 +66,8 @@ export default {
     PromptIsEmpty: 'こんにちは！今日は何かお手伝いできますか？',
     NotComplyPolicy: '申し訳ありませんが、送信されたコンテンツが私たちの使用ポリシーに準拠していません。当社のプラットフォームでは、ハラスメント、差別、暴力、ポルノグラフィ、その他の法律、規制、社会倫理に違反するコンテンツの投稿を禁止しています。ご質問がある場合は、開発者にお問い合わせいただくか、サポートをご利用ください。ありがとうございます。',
     SomethingWrong: '申し訳ありませんが、問題が発生しました。後でもう一度お試しください。',
+    SomethingWrongInOpenaiGptApi: '申し訳ありませんが、OpenAI GPT APIへのアクセス中に問題が発生しました。後でもう一度お試しください。',
+    SomethingWrongInOpenaiModerationApi: '申し訳ありませんが、OpenAI Moderation APIへのアクセス中に問題が発生しました。後でもう一度お試しください。',
+    SomethingWrongInOpenaiWhisperApi: '申し訳ありませんが、OpenAI Whisper APIへのアクセス中に問題が発生しました。後でもう一度お試しください。',
   },
 }

@@ -152,10 +152,33 @@ async function recStop() {
         options,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
-          const { responseText } = xhr
-
+          let { responseText } = xhr
+          responseText = removeDataPrefix(responseText)
           prompt.value = responseText
           isAudioPrompt.value = true
+
+          // 如果解析音频消息出错，就显示something wrong
+          const isError = isServerError(responseText)
+          if (isError) {
+            updateChat(
+              +uuid,
+              dataSources.value.length - 1,
+              {
+                dateTime: new Date().toLocaleString(),
+                text: t(`server.${getServerErrorType(responseText)}`),
+                inversion: false,
+                error: true,
+                loading: false,
+                requestOptions: { prompt: '', ...options },
+              },
+            )
+            scrollToBottom()
+
+            loading.value = false
+            sendingRecord.value = false
+
+            return
+          }
 
           onConversation()
         },
@@ -460,6 +483,8 @@ async function onRegenerate(index: number) {
               requestOptions: { prompt: message, ...options },
             },
           )
+          scrollToBottom()
+          return
         }
 
         // SSE response format "data: xxx"

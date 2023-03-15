@@ -44,7 +44,7 @@ async def config():
 
 
 @app.post("/chat-process")
-def chat_process(request_data: dict):
+async def chat_process(request_data: dict):
     prompt = request_data["prompt"]
     options = request_data["options"]
 
@@ -69,7 +69,7 @@ def chat_process(request_data: dict):
 @app.post("/audio-chat-process")
 async def audio_chat_process(audio: UploadFile = File(...)):
     prompt = process_audio(audio, "whisper-1")
-    return StreamingResponse(content=prompt, headers=stream_response_headers, media_type="text/event-stream")
+    return EventSourceResponse(content=prompt, headers=stream_response_headers)
 
 
 def init_config():
