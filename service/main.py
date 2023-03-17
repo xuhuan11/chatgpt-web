@@ -9,7 +9,6 @@ import uvicorn
 from message_store import MessageStore
 from whisper_wapper import process_audio
 import argparse
-from sse_starlette.sse import EventSourceResponse
 
 log_folder = os.path.join(abspath(dirname(__file__)), "log")
 logger.add(os.path.join(log_folder, "{time}.log"), level="INFO")
@@ -63,13 +62,13 @@ async def chat_process(request_data: dict):
         top_p = 1
 
     answer_text = process(prompt, options, memory_count, top_p, MASSAGE_STORE, model=API_MODEL)
-    return EventSourceResponse(answer_text, headers=stream_response_headers)
+    return StreamingResponse(content=answer_text, headers=stream_response_headers, media_type="text/event-stream")
 
 
 @app.post("/audio-chat-process")
 async def audio_chat_process(audio: UploadFile = File(...)):
     prompt = process_audio(audio, "whisper-1")
-    return EventSourceResponse(content=prompt, headers=stream_response_headers)
+    return StreamingResponse(content=prompt, headers=stream_response_headers, media_type="text/event-stream")
 
 
 def init_config():

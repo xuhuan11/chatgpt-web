@@ -112,7 +112,7 @@ async def process(prompt, options, memory_count, top_p, message_store, model="gp
                 #     # choices=openai_object_dict["choices"]
                 # )
             ))
-            yield message
+            yield "data: " + message
 
     except:
         err = traceback.format_exc()

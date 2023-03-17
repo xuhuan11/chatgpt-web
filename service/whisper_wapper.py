@@ -42,7 +42,11 @@ async def process_audio(audio, model="whisper-1"):
         yield Errors.SOMETHING_WRONG.value
         return
 
-    yield prompt
+    if not prompt:
+        yield Errors.PROMPT_IS_EMPTY.value
+        return
+
+    yield "data: " + prompt
 
 
 @on_exception(expo, openai.error.RateLimitError, max_tries=5)
