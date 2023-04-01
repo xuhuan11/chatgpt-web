@@ -8,7 +8,7 @@ services:
     ports:
       - 3002:3002
     environment:
-      OPENAI_API_KEY: ''
+      OPENAI_API_KEY: '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'
       # 可选，默认值为 gpt-3.5-turbo
       API_MODEL: gpt-3.5-turbo
       # Socks代理，可选，格式为 http://127.0.0.1:10808
