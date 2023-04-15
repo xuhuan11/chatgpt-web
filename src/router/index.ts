@@ -6,9 +6,14 @@ import { ChatLayout } from '@/views/chat/layout'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    name: 'Callback',
+    component: () => import('@/views/Callback.vue'),
+  },
+
+  {
+    path: '/chat',
     name: 'Root',
     component: ChatLayout,
-    redirect: '/chat',
     children: [
       {
         path: '/chat/:uuid?',
