@@ -592,12 +592,14 @@ function handleDelete(index: number) {
 
 function handleEnter(event: KeyboardEvent) {
   if (!isMobile.value) {
+    console.log('is not mobile')
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       handleSubmit()
     }
   }
   else {
+    console.log('is mobile')
     if (event.key === 'Enter' && event.ctrlKey) {
       event.preventDefault()
       handleSubmit()
@@ -657,6 +659,7 @@ const footerClass = computed(() => {
 
 onMounted(() => {
   scrollToBottom()
+  console.log('child')
 })
 
 onUnmounted(() => {

@@ -49,6 +49,12 @@ export const router = createRouter({
 })
 
 export async function setupRouter(app: App) {
+  router.beforeEach((to, from, next) => {
+    console.log('path:', to.path, 'from.name:', from.name)
+    if (from.name || to.path === '/')
+      next()
+  })
+
   app.use(router)
   await router.isReady()
 }
