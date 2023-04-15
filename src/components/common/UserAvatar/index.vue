@@ -26,24 +26,13 @@ const userInfo = computed(() => userStore.userInfo)
     </div>
     <div class="ml-2">
       <h2 class="font-bold text-md flex ">
-        ChatGPT Web
+        ChatGPT
       </h2>
       <p class="text-xs text-gray-500">
         <span
           v-if="isString(userInfo.description) && userInfo.description !== ''"
           v-text="userInfo.description"
         />
-
-        <span>
-          <a
-            href="https://github.com/WenJing95/chatgpt-web"
-            target="_blank"
-            class="text-[#4b9e5f] relative flex items-center"
-          >
-            View Source Code
-            <SvgIcon class="text-lg text-[#4b9e5f] ml-1" icon="carbon:logo-github" />
-          </a>
-        </span>
       </p>
     </div>
   </div>
